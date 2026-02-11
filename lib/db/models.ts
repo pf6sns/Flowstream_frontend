@@ -48,7 +48,7 @@ export interface Workflow {
   status: "processing" | "completed" | "failed";
   servicenowTicketId?: string;
   jiraTicketId?: string;
-  workflowData: Record<string, any>; // JSON object storing all steps
+  workflowData: Record<string, unknown>; // JSON object storing all steps
   startedAt: Date;
   completedAt?: Date;
   errorMessage?: string;
@@ -75,6 +75,6 @@ export interface ActivityLog {
   workflowId?: string | ObjectId;
   actionType: string;
   description: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: Date;
 }
