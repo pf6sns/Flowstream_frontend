@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Collections } from "@/lib/db/collections";
 import { getCurrentUser } from "@/lib/auth";
 import { encrypt, decrypt } from "@/lib/encryption";
+import type { CompanyIntegration } from "@/lib/db/models";
 
 /**
  * GET /api/integrations - Get all integrations for current company
@@ -43,6 +44,8 @@ export async function GET(request: NextRequest) {
 /**
  * POST /api/integrations - Create or update integration
  */
+type IntegrationType = CompanyIntegration["integrationType"];
+
 export async function POST(request: NextRequest) {
   try {
     const user = await getCurrentUser(request);
@@ -50,11 +53,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const {
-      integrationType,
-      config,
-    }: { integrationType: string; config: Record<string, any> } =
+    const body: { integrationType: IntegrationType; config: Record<string, any> } =
       await request.json();
+
+    const { integrationType, config } = body;
 
     if (!integrationType || !config) {
       return NextResponse.json(
