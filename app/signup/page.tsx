@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -161,7 +161,7 @@ export default function SignupPage() {
                   autoComplete="name"
                   value={formData.fullName}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition-colors"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg text-black placeholder:text-slate-400 focus:ring-2 focus:ring-brand focus:border-brand transition-colors"
                   placeholder="John Doe"
                   required
                   disabled={loading}
@@ -200,7 +200,7 @@ export default function SignupPage() {
                   autoComplete="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition-colors"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg text-black placeholder:text-slate-400 focus:ring-2 focus:ring-brand focus:border-brand transition-colors"
                   placeholder="you@company.com"
                   required
                   disabled={loading}
@@ -238,7 +238,7 @@ export default function SignupPage() {
                   type="text"
                   value={formData.companyName}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition-colors"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg text-black placeholder:text-slate-400 focus:ring-2 focus:ring-brand focus:border-brand transition-colors"
                   placeholder="Your Company"
                   disabled={loading}
                 />
@@ -276,7 +276,7 @@ export default function SignupPage() {
                   autoComplete="new-password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition-colors"
+                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg text-black placeholder:text-slate-400 focus:ring-2 focus:ring-brand focus:border-brand transition-colors"
                   placeholder="At least 8 characters"
                   required
                   disabled={loading}
@@ -332,7 +332,7 @@ export default function SignupPage() {
                   autoComplete="new-password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition-colors"
+                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg text-black placeholder:text-slate-400 focus:ring-2 focus:ring-brand focus:border-brand transition-colors"
                   placeholder="Confirm your password"
                   required
                   disabled={loading}

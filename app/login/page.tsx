@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -106,7 +106,7 @@ export default function LoginPage() {
                   autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition-colors"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg text-black placeholder:text-slate-400 focus:ring-2 focus:ring-brand focus:border-brand transition-colors"
                   placeholder="you@company.com"
                   required
                   disabled={loading}
@@ -144,7 +144,7 @@ export default function LoginPage() {
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand transition-colors"
+                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg text-black placeholder:text-slate-400 focus:ring-2 focus:ring-brand focus:border-brand transition-colors"
                   placeholder="Enter your password"
                   required
                   disabled={loading}
