@@ -38,7 +38,10 @@ const solutions = [
 
 export function Solution() {
   return (
-    <section id="solution" className="bg-linear-to-b from-white to-brand-50 py-20 sm:py-24">
+    <section
+      id="solution"
+      className="bg-linear-to-b from-white to-brand-50 py-20 sm:py-24"
+    >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -51,7 +54,7 @@ export function Solution() {
             The solution
           </p>
           <h2 className="mt-3 font-semibold text-2xl text-text sm:text-3xl md:text-4xl">
-            One AI agent. Complete orchestration.
+            One AI Agent. Complete Orchestration.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 md:text-base">
             OrchestrAI replaces manual handoffs with intelligent, end-to-end automation across your

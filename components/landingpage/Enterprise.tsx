@@ -38,8 +38,8 @@ const features = [
 
 export function Enterprise() {
   return (
-    <section id="enterprise" className="bg-white py-20 sm:py-24">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <section id="enterprise" className="bg-white py-24 sm:py-32">
+      <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -47,30 +47,34 @@ export function Enterprise() {
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">
-            Enterprise ready
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#0065ff]">
+            Enterprise Ready
           </p>
-          <h2 className="mt-3 font-semibold text-2xl text-text sm:text-3xl md:text-4xl">
-            Built for scale. Ready for production.
+          <h2 className="mt-4 font-display text-3xl font-bold text-[#111111] md:text-5xl">
+            Built for Scale. Ready for Production.
           </h2>
         </motion.div>
 
-        <div className="mt-12 grid gap-6 sm:mt-16 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((item, i) => (
             <motion.div
               key={item.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.06, duration: 0.45 }}
-              className="flex items-start gap-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand/30 hover:shadow-lg"
+              transition={{ delay: i * 0.08, duration: 0.5 }}
+              className="flex items-start gap-5 rounded-xl border border-slate-100 bg-white p-8 transition-all duration-300 hover:border-[#0065ff]/20 hover:shadow-lg"
             >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand">
-                <item.icon className="h-5 w-5" />
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#e6f0ff] text-[#0065ff]">
+                <item.icon className="h-6 w-6" />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-text">{item.title}</h3>
-                <p className="mt-1 text-sm text-slate-600">{item.desc}</p>
+                <h3 className="font-display text-lg font-bold text-[#111111]">
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-gray-500">
+                  {item.desc}
+                </p>
               </div>
             </motion.div>
           ))}

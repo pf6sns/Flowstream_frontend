@@ -32,16 +32,16 @@ export function Hero() {
           </div>
 
           <h1 className="mx-auto max-w-4xl font-semibold tracking-tight text-text text-4xl leading-tight sm:text-5xl md:text-6xl md:leading-[1.05]">
-            Resolve incidents{" "}
+            Resolve Incidents{" "}
             <span className="bg-gradient-to-r from-brand to-brand-200 bg-clip-text text-transparent">
-              before they escalate
+              Before They Escalate
             </span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg">
-            OrchestrAI connects your email, service desk, and engineering tools
-            into one intelligent automation layer — turning hours of manual
-            triage into minutes of AI-driven resolution.
+            OrchestrAI connects your email, service desk, and engineering tools into one
+            intelligent automation layer — turning hours of manual triage into minutes of
+            AI-driven resolution.
           </p>
         </motion.div>
 
