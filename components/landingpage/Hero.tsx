@@ -5,7 +5,7 @@ import { Play } from "lucide-react";
 
 /**
  * Hero section for the landing page.
- * Matches the OrchestrAI hero but adapted to the Next.js app + brand tokens.
+ * Matches the  Flowstream hero but adapted to the Next.js app + brand tokens.
  */
 export function Hero() {
   return (
@@ -38,7 +38,7 @@ export function Hero() {
 
           {/* Subheading copy – use darker gray for better contrast on the blue background */}
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-slate-700 md:text-lg">
-            OrchestrAI connects your email, service desk, and engineering tools into one
+             Flowstream connects your email, service desk, and engineering tools into one
             intelligent automation layer — turning hours of manual triage into minutes of
             AI-driven resolution.
           </p>

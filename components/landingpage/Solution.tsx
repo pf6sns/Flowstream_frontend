@@ -65,7 +65,7 @@ export function Solution() {
             One AI Agent. Complete Orchestration.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 md:text-base">
-            OrchestrAI replaces manual handoffs with intelligent, end-to-end automation across your
+             Flowstream replaces manual handoffs with intelligent, end-to-end automation across your
             entire incident lifecycle.
           </p>
         </motion.div>

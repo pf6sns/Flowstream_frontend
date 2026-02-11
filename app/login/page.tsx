@@ -50,7 +50,7 @@ export default function LoginPage() {
             <span className="text-white font-bold text-2xl">O</span>
           </div>
           <h1 className="text-3xl font-bold text-text mb-2">Welcome back</h1>
-          <p className="text-gray-600">Sign in to your OrchestrAI account</p>
+          <p className="text-gray-600">Sign in to your  Flowstream account</p>
         </div>
 
         {/* Error Message */}
@@ -272,7 +272,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <p className="mt-8 text-center text-sm text-gray-500">
-          © {new Date().getFullYear()} OrchestrAI. All rights reserved.
+          © {new Date().getFullYear()}  Flowstream. All rights reserved.
         </p>
       </div>
     </div>

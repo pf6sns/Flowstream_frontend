@@ -37,5 +37,5 @@ export default clientPromise;
  */
 export async function getDatabase(): Promise<Db> {
   const client = await clientPromise;
-  return client.db(process.env.MONGODB_DB_NAME || "orchestrai");
+  return client.db(process.env.MONGODB_DB_NAME || " Flowstream");
 }

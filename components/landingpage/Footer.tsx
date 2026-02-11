@@ -1,12 +1,12 @@
 import Link from "next/link";
 
 /**
- * Marketing footer for the landing page, adapted from the orchestrai-flow Footer.
+ * Marketing footer for the landing page, adapted from the  Flowstream-flow Footer.
  */
 export function Footer() {
   return (
     <div className="px-4 pb-6 sm:px-6 lg:px-8">
-      <footer className="mx-auto max-w-6xl rounded-2xl bg-gradient-to-b from-white to-brand-50 py-10 shadow-sm">
+      <footer className="mt-8 w-full rounded-2xl bg-gradient-to-b from-white to-brand-50 py-10 shadow-sm">
         <div className="flex flex-col items-center justify-between gap-6 px-4 sm:flex-row sm:px-6 lg:px-8">
           <div className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-md bg-brand">

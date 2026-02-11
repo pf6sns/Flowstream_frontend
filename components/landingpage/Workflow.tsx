@@ -5,7 +5,7 @@ import { Mail, Brain, Ticket, Code2, Rocket, CheckCircle, Send } from "lucide-re
 
 const steps = [
   { icon: Mail, label: "Issue Raised", desc: "User reports an issue via email, Slack, or portal. No complex forms required." },
-  { icon: Brain, label: "AI Analysis", desc: "OrchestrAI instantly classifies the intent, severity, and required expertise." },
+  { icon: Brain, label: "AI Analysis", desc: " Flowstream instantly classifies the intent, severity, and required expertise." },
   { icon: Ticket, label: "Ticket Creation", desc: "A fully populated incident is created in ServiceNow/Jira with correct routing." },
   { icon: Code2, label: "Automated Diagnosis", desc: "The system runs diagnostic scripts and suggests potential root causes." },
   { icon: Rocket, label: "Remediation", desc: "Engineering approves AI-suggested fixes or implements code changes." },

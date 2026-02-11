@@ -9,7 +9,7 @@ const bcrypt = require("bcryptjs");
 dotenv.config({ path: ".env.local" });
 
 const MONGODB_URI = process.env.MONGODB_URI;
-const DB_NAME = process.env.MONGODB_DB_NAME || "orchestrai";
+const DB_NAME = process.env.MONGODB_DB_NAME || " Flowstream";
 
 if (!MONGODB_URI) {
   console.error("❌ MONGODB_URI is not set in .env.local");

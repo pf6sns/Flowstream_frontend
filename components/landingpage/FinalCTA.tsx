@@ -20,7 +20,7 @@ export function FinalCTA() {
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-slate-600 md:text-base">
             Join forward-thinking enterprises that have eliminated manual triage and achieved faster
-            resolution times with OrchestrAI.
+            resolution times with  Flowstream.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:mt-10 sm:flex-row">
             <Link

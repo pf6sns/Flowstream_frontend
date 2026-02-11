@@ -9,9 +9,9 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "OrchestrAI — Agentic AI Incident Automation",
+  title: " Flowstream — Agentic AI Incident Automation",
   description:
-    "OrchestrAI automates your entire incident lifecycle with Agentic AI — from email to resolution. Faster MTTR, zero manual triage.",
+    " Flowstream automates your entire incident lifecycle with Agentic AI — from email to resolution. Faster MTTR, zero manual triage.",
 };
 
 export default function RootLayout({

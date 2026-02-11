@@ -104,7 +104,7 @@ export default function SignupPage() {
             <span className="text-white font-bold text-2xl">O</span>
           </div>
           <h1 className="text-3xl font-bold text-text mb-2">Create your account</h1>
-          <p className="text-gray-600">Get started with OrchestrAI today</p>
+          <p className="text-gray-600">Get started with  Flowstream today</p>
         </div>
 
         {/* Error Message */}

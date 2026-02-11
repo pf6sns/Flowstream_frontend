@@ -22,7 +22,7 @@ export function LandingNavbar() {
             <span className="text-sm font-bold text-white">O</span>
           </div>
           <span className="font-semibold text-text text-base sm:text-lg">
-            OrchestrAI
+             Flowstream
           </span>
           <span className="ml-1 hidden text-xs text-slate-500 sm:inline">
             by SNS Square
