@@ -102,9 +102,10 @@ export default function IntegrationsPage() {
         setError(null);
         const res = await fetch("/api/integrations", { cache: "no-store" });
         if (res.status === 401) {
-          setError("Your session has expired. Please sign in again.");
+          setError(
+            "You need to be signed in to view integrations. Please log in and reload this page.",
+          );
           setLoading(false);
-          router.push("/login?from=/dashboard/integrations");
           return;
         }
         if (!res.ok) {
@@ -192,8 +193,9 @@ export default function IntegrationsPage() {
       });
       const data = await res.json();
       if (res.status === 401) {
-        setError("Your session has expired. Please sign in again.");
-        router.push("/login?from=/dashboard/integrations");
+        setError(
+          "Your session has expired or you are not signed in. Please log in again.",
+        );
         return;
       }
       if (!res.ok || !data.success) {
@@ -237,8 +239,9 @@ export default function IntegrationsPage() {
       const data = await res.json();
 
       if (res.status === 401) {
-        setError("Your session has expired. Please sign in again.");
-        router.push("/login?from=/dashboard/integrations");
+        setError(
+          "Your session has expired or you are not signed in. Please log in again.",
+        );
         return;
       }
 
@@ -734,7 +737,9 @@ function EmailForm({
 
   useEffect(() => {
     if (initialConfig) {
-      if (!email && initialConfig.email) setEmail(initialConfig.email);
+      // Prefer persisted fromEmail (or username) when hydrating from existing config
+      const persistedEmail = initialConfig.fromEmail || initialConfig.username;
+      if (!email && persistedEmail) setEmail(persistedEmail);
       if (!smtpHost && initialConfig.smtpHost) setSmtpHost(initialConfig.smtpHost);
       if (initialConfig.smtpPort && smtpPort === 587) setSmtpPort(initialConfig.smtpPort);
       if (!fromName && initialConfig.fromName) setFromName(initialConfig.fromName);
