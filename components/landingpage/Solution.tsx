@@ -50,10 +50,18 @@ export function Solution() {
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">
-            The solution
-          </p>
-          <h2 className="mt-3 font-semibold text-2xl text-text sm:text-3xl md:text-4xl">
+          <div className="flex justify-center">
+            <div className="relative inline-flex items-center justify-center px-8 py-2">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 rounded-full border border-[#bcd6ff] bg-[#e6f0ff]"
+              />
+              <span className="relative text-xs font-semibold uppercase tracking-[0.2em] text-[#0065ff]">
+                THE SOLUTION
+              </span>
+            </div>
+          </div>
+          <h2 className="mt-3 font-semibold text-2xl text-black sm:text-3xl md:text-4xl">
             One AI Agent. Complete Orchestration.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 md:text-base">
@@ -76,7 +84,7 @@ export function Solution() {
                 <item.icon className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-text">{item.title}</h3>
+                <h3 className="text-sm font-semibold text-black">{item.title}</h3>
                 <p className="mt-1 text-sm leading-relaxed text-slate-600">{item.desc}</p>
               </div>
             </motion.div>
