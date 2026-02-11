@@ -37,5 +37,7 @@ export default clientPromise;
  */
 export async function getDatabase(): Promise<Db> {
   const client = await clientPromise;
-  return client.db(process.env.MONGODB_DB_NAME || " Flowstream");
+  // IMPORTANT: Avoid leading/trailing spaces in DB name; they produce invalid namespaces
+  // like ` Flowstream.users` and cause MongoDB code 73 (InvalidNamespace).
+  return client.db(process.env.MONGODB_DB_NAME || "Flowstream");
 }

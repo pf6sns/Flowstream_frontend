@@ -9,7 +9,10 @@ const bcrypt = require("bcryptjs");
 dotenv.config({ path: ".env.local" });
 
 const MONGODB_URI = process.env.MONGODB_URI;
-const DB_NAME = process.env.MONGODB_DB_NAME || " Flowstream";
+// IMPORTANT: MongoDB database names cannot contain leading/trailing spaces.
+// The previous default (`" Flowstream"`) had a leading space, which produced
+// an invalid namespace like ` Flowstream.companies` and caused code 73 errors.
+const DB_NAME = process.env.MONGODB_DB_NAME || "Flowstream";
 
 if (!MONGODB_URI) {
   console.error("❌ MONGODB_URI is not set in .env.local");
