@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  /* Keep a single light theme so text is always dark against light surfaces */
   --background: #ffffff;
   --foreground: #242424;
   --text: #242424;
@@ -12,14 +13,6 @@
   --color-text: var(--text);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --text: #ededed;
-  }
 }
 
 body {
