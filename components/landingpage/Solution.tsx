@@ -80,7 +80,7 @@ export function Solution() {
               transition={{ delay: i * 0.05, duration: 0.45 }}
               className="flex gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg"
             >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#e6f0ff] text-[#0065ff]">
                 <item.icon className="h-5 w-5" />
               </div>
               <div>

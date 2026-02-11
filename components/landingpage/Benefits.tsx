@@ -82,9 +82,9 @@ const Benefits = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08, duration: 0.5 }}
-              className="rounded-2xl border border-slate-100 bg-white p-10 text-center transition-all duration-300 hover:border-[#e6f0ff] hover:shadow-xl hover:shadow-brand/5"
+              className="rounded-2xl border border-slate-100 bg-white p-8 text-center transition-all duration-300 hover:border-[#e6f0ff] hover:shadow-xl hover:shadow-brand/5"
             >
-              <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-[#e6f0ff] text-[#0065ff]">
+              <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[#e6f0ff] text-[#0065ff]">
                 <item.icon className="h-7 w-7" />
               </div>
               <div className="mt-4 font-display text-5xl font-bold text-[#0065ff]">

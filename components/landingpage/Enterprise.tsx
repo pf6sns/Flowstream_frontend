@@ -38,7 +38,7 @@ const features = [
 
 export function Enterprise() {
   return (
-    <section id="enterprise" className="bg-white py-24 sm:py-32">
+    <section id="enterprise" className="bg-gradient-to-b from-[#e6f0ff] to-white py-24 sm:py-32">
       <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -77,7 +77,7 @@ export function PainPoints() {
               transition={{ delay: i * 0.05, duration: 0.45 }}
               className="group rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg"
             >
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50 text-brand">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#e6f0ff] text-[#0065ff]">
                 <pain.icon className="h-5 w-5" />
               </div>
               <h3 className="font-medium text-black">{pain.title}</h3>

@@ -20,8 +20,8 @@ export default function Home() {
         <Workflow />
         <Enterprise />
         <FinalCTA />
+        <Footer />
       </main>
-      <Footer />
     </div>
   );
 }

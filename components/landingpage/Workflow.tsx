@@ -69,7 +69,7 @@ export function Workflow() {
                 <div className="ml-20 flex-1 md:ml-0 md:w-1/2">
                   {/* Step number directly above the card title (desktop only) */}
                   <span
-                    className={`hidden md:block mb-2 text-6xl font-bold text-brand-75 ${
+                    className={`hidden md:block mt-2 mb-2 text-6xl font-bold text-[#0065ff]/70 ${
                       i % 2 !== 0 ? "text-left" : "text-right"
                     }`}
                   >
