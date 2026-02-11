@@ -35,6 +35,16 @@ export interface CompanyIntegration {
   configJson: string; // Encrypted JSON string
   status: "connected" | "disconnected" | "error";
   lastSyncedAt?: Date;
+  /**
+   * Optional non-sensitive configuration stored in plain JSON.
+   * For example, for Jira we keep:
+   * - baseUrl
+   * - email
+   * - projectKey
+   * - issueType
+   * while sensitive values like API tokens stay inside configJson (encrypted).
+   */
+  publicConfig?: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { AlertTriangle, CheckCircle2, PlugZap } from "lucide-react";
 
@@ -12,14 +13,87 @@ type IntegrationStatus = {
   lastSyncedAt?: string | null;
 };
 
+type JiraConfig = {
+  baseUrl: string;
+  email: string;
+  apiToken?: string;
+  projectKey?: string;
+  issueType?: string;
+  hasToken?: boolean;
+  maskedToken?: string;
+};
+
+type ServiceNowConfig = {
+  instanceUrl: string;
+  username: string;
+  password: string;
+  table?: string;
+};
+
+type EmailProvider = "gmail" | "outlook" | "custom";
+
+type EmailConfig = {
+  provider: EmailProvider;
+  smtpHost: string;
+  smtpPort: number;
+  username: string;
+  password: string;
+  fromEmail: string;
+  fromName: string;
+};
+
+type AIProvider = "openai" | "groq" | "gemini";
+
+type AIConfig = {
+  provider: AIProvider;
+  apiKey: string;
+};
+
+type IntegrationConfigByType = {
+  jira: JiraConfig;
+  servicenow: ServiceNowConfig;
+  gmail: EmailConfig;
+  groq: AIConfig;
+};
+
 type StatusMap = Partial<Record<IntegrationType, IntegrationStatus>>;
+type ConfigMap = Partial<IntegrationConfigByType>;
+
+type IntegrationApiItem = {
+  integrationType: IntegrationType;
+  status: "connected" | "disconnected" | "error";
+  lastSyncedAt?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+  config?: unknown;
+};
+
+type IntegrationsApiResponse = {
+  integrations?: IntegrationApiItem[];
+};
 
 export default function IntegrationsPage() {
+  const router = useRouter();
   const [statuses, setStatuses] = useState<StatusMap>({});
+  const [configs, setConfigs] = useState<ConfigMap>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openPanel, setOpenPanel] = useState<IntegrationType | null>(null);
   const [saving, setSaving] = useState<IntegrationType | null>(null);
+  const [testing, setTesting] = useState<
+    Partial<Record<IntegrationType, boolean>>
+  >({});
+  const [testResults, setTestResults] = useState<
+    Partial<
+      Record<
+        IntegrationType,
+        {
+          status: "success" | "error";
+          message: string;
+        }
+      >
+    >
+  >({});
 
   useEffect(() => {
     const fetchIntegrations = async () => {
@@ -27,20 +101,46 @@ export default function IntegrationsPage() {
         setLoading(true);
         setError(null);
         const res = await fetch("/api/integrations", { cache: "no-store" });
+        if (res.status === 401) {
+          setError("Your session has expired. Please sign in again.");
+          setLoading(false);
+          router.push("/login?from=/dashboard/integrations");
+          return;
+        }
         if (!res.ok) {
           setLoading(false);
           return;
         }
-        const data = await res.json();
-        const map: StatusMap = {};
-        (data.integrations ?? []).forEach((i: any) => {
-          map[i.integrationType as IntegrationType] = {
-            integrationType: i.integrationType,
-            status: i.status,
-            lastSyncedAt: i.lastSyncedAt,
+        const data: IntegrationsApiResponse = await res.json();
+        const statusMap: StatusMap = {};
+        const configMap: ConfigMap = {};
+        (data.integrations ?? []).forEach((item) => {
+          const type = item.integrationType;
+          statusMap[type] = {
+            integrationType: type,
+            status: item.status,
+            lastSyncedAt: item.lastSyncedAt,
           };
+
+          if (item.config) {
+            switch (type) {
+              case "jira":
+                configMap.jira = item.config as JiraConfig;
+                break;
+              case "servicenow":
+                configMap.servicenow = item.config as ServiceNowConfig;
+                break;
+              case "gmail":
+                configMap.gmail = item.config as EmailConfig;
+                break;
+              case "groq":
+                configMap.groq = item.config as AIConfig;
+                break;
+            }
+          }
         });
-        setStatuses(map);
+        setStatuses(statusMap);
+        setConfigs(configMap);
       } catch (err) {
         console.error("Error loading integrations:", err);
         setError("Unable to load integration status.");
@@ -78,7 +178,10 @@ export default function IntegrationsPage() {
     return new Date(ts).toLocaleString();
   };
 
-  const saveIntegration = async (type: IntegrationType, config: Record<string, any>) => {
+  const saveIntegration = async <T extends IntegrationType>(
+    type: T,
+    config: IntegrationConfigByType[T],
+  ) => {
     try {
       setSaving(type);
       setError(null);
@@ -88,11 +191,16 @@ export default function IntegrationsPage() {
         body: JSON.stringify({ integrationType: type, config }),
       });
       const data = await res.json();
+      if (res.status === 401) {
+        setError("Your session has expired. Please sign in again.");
+        router.push("/login?from=/dashboard/integrations");
+        return;
+      }
       if (!res.ok || !data.success) {
         setError(data.error || "Failed to save integration.");
         return;
       }
-      // Mark as connected locally
+      // Mark as connected locally and bump last sync timestamp
       setStatuses((prev) => ({
         ...prev,
         [type]: {
@@ -101,11 +209,68 @@ export default function IntegrationsPage() {
           lastSyncedAt: new Date().toISOString(),
         },
       }));
+      // We don't get the decrypted config back; keep what the user just entered
+      setConfigs((prev) => ({
+        ...prev,
+        [type]: config,
+      }));
     } catch (err) {
       console.error("Error saving integration:", err);
       setError("Failed to save integration.");
     } finally {
       setSaving(null);
+    }
+  };
+
+  const testConnection = async (type: IntegrationType) => {
+    try {
+      setTesting((prev) => ({ ...prev, [type]: true }));
+      setTestResults((prev) => ({ ...prev, [type]: undefined }));
+      setError(null);
+
+      const res = await fetch("/api/integrations/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ integrationType: type }),
+      });
+
+      const data = await res.json();
+
+      if (res.status === 401) {
+        setError("Your session has expired. Please sign in again.");
+        router.push("/login?from=/dashboard/integrations");
+        return;
+      }
+
+      if (!res.ok) {
+        setTestResults((prev) => ({
+          ...prev,
+          [type]: {
+            status: "error",
+            message: data.error || "Connection test failed.",
+          },
+        }));
+        return;
+      }
+
+      setTestResults((prev) => ({
+        ...prev,
+        [type]: {
+          status: "success",
+          message: data.message || "Connection successful.",
+        },
+      }));
+    } catch (err) {
+      console.error("Error testing integration:", err);
+      setTestResults((prev) => ({
+        ...prev,
+        [type]: {
+          status: "error",
+          message: "Connection test failed. Please try again.",
+        },
+      }));
+    } finally {
+      setTesting((prev) => ({ ...prev, [type]: false }));
     }
   };
 
@@ -140,8 +305,12 @@ export default function IntegrationsPage() {
           loading={loading}
           isOpen={openPanel === "jira"}
           onToggle={() => setOpenPanel((prev) => (prev === "jira" ? null : "jira"))}
+          onTest={() => testConnection("jira")}
+          testing={Boolean(testing["jira"])}
+          testResult={testResults["jira"]}
         >
           <JiraForm
+            initialConfig={configs["jira"]}
             saving={saving === "jira"}
             onSave={(config) => saveIntegration("jira", config)}
           />
@@ -158,8 +327,12 @@ export default function IntegrationsPage() {
           onToggle={() =>
             setOpenPanel((prev) => (prev === "servicenow" ? null : "servicenow"))
           }
+          onTest={() => testConnection("servicenow")}
+          testing={Boolean(testing["servicenow"])}
+          testResult={testResults["servicenow"]}
         >
           <ServiceNowForm
+            initialConfig={configs["servicenow"]}
             saving={saving === "servicenow"}
             onSave={(config) => saveIntegration("servicenow", config)}
           />
@@ -174,8 +347,12 @@ export default function IntegrationsPage() {
           loading={loading}
           isOpen={openPanel === "gmail"}
           onToggle={() => setOpenPanel((prev) => (prev === "gmail" ? null : "gmail"))}
+          onTest={() => testConnection("gmail")}
+          testing={Boolean(testing["gmail"])}
+          testResult={testResults["gmail"]}
         >
           <EmailForm
+            initialConfig={configs["gmail"]}
             saving={saving === "gmail"}
             onSave={(config) => saveIntegration("gmail", config)}
           />
@@ -190,8 +367,12 @@ export default function IntegrationsPage() {
           loading={loading}
           isOpen={openPanel === "groq"}
           onToggle={() => setOpenPanel((prev) => (prev === "groq" ? null : "groq"))}
+          onTest={() => testConnection("groq")}
+          testing={Boolean(testing["groq"])}
+          testResult={testResults["groq"]}
         >
           <AIForm
+            initialConfig={configs["groq"]}
             saving={saving === "groq"}
             onSave={(config) => saveIntegration("groq", config)}
           />
@@ -209,6 +390,14 @@ type IntegrationCardProps = {
   loading: boolean;
   isOpen: boolean;
   onToggle: () => void;
+  onTest: () => void;
+  testing: boolean;
+  testResult?:
+    | {
+        status: "success" | "error";
+        message: string;
+      }
+    | undefined;
   children: React.ReactNode;
 };
 
@@ -220,6 +409,9 @@ function IntegrationCard({
   loading,
   isOpen,
   onToggle,
+  onTest,
+  testing,
+  testResult,
   children,
 }: IntegrationCardProps) {
   return (
@@ -262,6 +454,23 @@ function IntegrationCard({
         </Button>
       </div>
 
+      {testResult && (
+        <div
+          className={`mt-3 flex items-center gap-2 rounded-md border px-2 py-1 text-[11px] ${
+            testResult.status === "success"
+              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+              : "border-red-200 bg-red-50 text-red-700"
+          }`}
+        >
+          {testResult.status === "success" ? (
+            <CheckCircle2 className="h-3 w-3" />
+          ) : (
+            <AlertTriangle className="h-3 w-3" />
+          )}
+          <span>{testResult.message}</span>
+        </div>
+      )}
+
       {isOpen && <div className="mt-4 border-t border-slate-100 pt-4">{children}</div>}
     </section>
   );
@@ -269,11 +478,13 @@ function IntegrationCard({
 
 // Jira form
 function JiraForm({
+  initialConfig,
   saving,
   onSave,
 }: {
+  initialConfig?: JiraConfig;
   saving: boolean;
-  onSave: (config: Record<string, any>) => void;
+  onSave: (config: JiraConfig) => void;
 }) {
   const [baseUrl, setBaseUrl] = useState("");
   const [email, setEmail] = useState("");
@@ -281,15 +492,39 @@ function JiraForm({
   const [projectKey, setProjectKey] = useState("");
   const [issueType, setIssueType] = useState("");
 
+  useEffect(() => {
+    if (initialConfig) {
+      if (!baseUrl && initialConfig.baseUrl) setBaseUrl(initialConfig.baseUrl);
+      if (!email && initialConfig.email) setEmail(initialConfig.email);
+      // Show masked token in the input (first 5 chars + *), but do not send it back as a real token
+      if (!apiToken && initialConfig.maskedToken) {
+        setApiToken(initialConfig.maskedToken);
+      }
+      if (!projectKey && initialConfig.projectKey) setProjectKey(initialConfig.projectKey);
+      if (!issueType && initialConfig.issueType) setIssueType(initialConfig.issueType);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialConfig]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({
+    const payload: JiraConfig = {
       baseUrl,
       email,
-      apiToken,
       projectKey,
       issueType,
-    });
+    };
+
+    // Only send apiToken when user actually enters a new one
+    // (different from the masked value we pre-filled).
+    if (
+      apiToken.trim().length > 0 &&
+      apiToken !== initialConfig?.maskedToken
+    ) {
+      payload.apiToken = apiToken;
+    }
+
+    onSave(payload);
   };
 
   return (
@@ -323,10 +558,28 @@ function JiraForm({
         />
       </div>
       <div className="space-y-2">
-        <label className="block text-[11px] font-medium text-slate-600">Jira API Token *</label>
+        <div className="flex items-center gap-1">
+          <label className="block text-[11px] font-medium text-slate-600">
+            Jira API Token *
+          </label>
+          {initialConfig?.hasToken && initialConfig.maskedToken && (
+            <div className="group relative inline-flex items-center">
+              <span className="flex h-4 w-4 items-center justify-center rounded-full border border-slate-300 bg-slate-50 text-[10px] font-semibold text-slate-500">
+                i
+              </span>
+              <div className="pointer-events-none absolute left-1/2 top-full z-10 mt-1 hidden w-64 -translate-x-1/2 rounded-md border border-slate-200 bg-white px-3 py-2 text-[11px] text-slate-600 shadow-md group-hover:block">
+                <p>
+                  For security we only show the first 5 characters of your
+                  existing key. Paste a full new Jira API token here if you want
+                  to update it; leaving this field empty will keep the current
+                  key.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
         <input
           type="password"
-          required
           value={apiToken}
           onChange={(e) => setApiToken(e.target.value)}
           placeholder="ATATT3x..."
@@ -370,16 +623,27 @@ function JiraForm({
 
 // ServiceNow form
 function ServiceNowForm({
+  initialConfig,
   saving,
   onSave,
 }: {
+  initialConfig?: ServiceNowConfig;
   saving: boolean;
-  onSave: (config: Record<string, any>) => void;
+  onSave: (config: ServiceNowConfig) => void;
 }) {
   const [instanceUrl, setInstanceUrl] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [table, setTable] = useState("incident");
+
+  useEffect(() => {
+    if (initialConfig) {
+      if (!instanceUrl && initialConfig.instanceUrl) setInstanceUrl(initialConfig.instanceUrl);
+      if (!username && initialConfig.username) setUsername(initialConfig.username);
+      if (!table && initialConfig.table) setTable(initialConfig.table);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialConfig]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -453,18 +717,31 @@ function ServiceNowForm({
 
 // Email / SMTP form
 function EmailForm({
+  initialConfig,
   saving,
   onSave,
 }: {
+  initialConfig?: EmailConfig;
   saving: boolean;
-  onSave: (config: Record<string, any>) => void;
+  onSave: (config: EmailConfig) => void;
 }) {
-  const [provider, setProvider] = useState<"gmail" | "outlook" | "custom">("gmail");
+  const [provider, setProvider] = useState<EmailProvider>("gmail");
   const [email, setEmail] = useState("");
   const [smtpHost, setSmtpHost] = useState("smtp.gmail.com");
   const [smtpPort, setSmtpPort] = useState(587);
   const [password, setPassword] = useState("");
   const [fromName, setFromName] = useState("Support Bot");
+
+  useEffect(() => {
+    if (initialConfig) {
+      if (!email && initialConfig.email) setEmail(initialConfig.email);
+      if (!smtpHost && initialConfig.smtpHost) setSmtpHost(initialConfig.smtpHost);
+      if (initialConfig.smtpPort && smtpPort === 587) setSmtpPort(initialConfig.smtpPort);
+      if (!fromName && initialConfig.fromName) setFromName(initialConfig.fromName);
+      if (initialConfig.provider) setProvider(initialConfig.provider);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialConfig]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -502,7 +779,7 @@ function EmailForm({
           <select
             value={provider}
             onChange={(e) => {
-              const value = e.target.value as "gmail" | "outlook" | "custom";
+              const value = e.target.value as EmailProvider;
               setProvider(value);
               if (value === "gmail") setSmtpHost("smtp.gmail.com");
               if (value === "outlook") setSmtpHost("smtp.office365.com");
@@ -577,14 +854,22 @@ function EmailForm({
 
 // AI provider form
 function AIForm({
+  initialConfig,
   saving,
   onSave,
 }: {
+  initialConfig?: AIConfig;
   saving: boolean;
-  onSave: (config: Record<string, any>) => void;
+  onSave: (config: AIConfig) => void;
 }) {
-  const [provider, setProvider] = useState<"openai" | "groq" | "gemini">("groq");
+  const [provider, setProvider] = useState<AIProvider>("groq");
   const [apiKey, setApiKey] = useState("");
+
+  useEffect(() => {
+    if (initialConfig && initialConfig.provider) {
+      setProvider(initialConfig.provider);
+    }
+  }, [initialConfig]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
