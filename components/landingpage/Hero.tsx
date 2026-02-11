@@ -9,7 +9,7 @@ import { Play } from "lucide-react";
  */
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-white to-brand-50 pt-32 pb-24">
+    <section className="relative overflow-hidden bg-gradient-to-b from-white to-[#e6f0ff] pt-32 pb-24">
       {/* Subtle grid pattern */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.04]"
@@ -31,14 +31,13 @@ export function Hero() {
             Agentic AI for Enterprise Operations
           </div>
 
-          <h1 className="mx-auto max-w-4xl font-semibold tracking-tight text-text text-4xl leading-tight sm:text-5xl md:text-6xl md:leading-[1.05]">
+          <h1 className="mx-auto max-w-4xl font-semibold tracking-tight text-black text-4xl leading-tight sm:text-5xl md:text-6xl md:leading-[1.05]">
             Resolve Incidents{" "}
-            <span className="bg-gradient-to-r from-brand to-brand-200 bg-clip-text text-transparent">
-              Before They Escalate
-            </span>
+            <span className="text-brand">Before They Escalate</span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg">
+          {/* Subheading copy – use darker gray for better contrast on the blue background */}
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-slate-700 md:text-lg">
             OrchestrAI connects your email, service desk, and engineering tools into one
             intelligent automation layer — turning hours of manual triage into minutes of
             AI-driven resolution.
@@ -56,18 +55,18 @@ export function Hero() {
             href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex min-w-[180px] items-center justify-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white shadow-sm transition-transform hover:-translate-y-0.5 hover:bg-brand-400"
+            className="inline-flex min-w-[180px] items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-sm font-semibold text-white shadow-sm transition-transform hover:-translate-y-0.5 hover:bg-neutral-900"
           >
             <Play className="h-4 w-4 fill-current" />
-            Watch demo
+            Watch Demo
           </a>
 
           {/* Request demo CTA scroll to contact / signup */}
           <a
             href="#benefits"
-            className="inline-flex min-w-[180px] items-center justify-center rounded-full border border-brand bg-white px-6 py-3 text-sm font-semibold text-brand shadow-sm transition-colors hover:bg-brand-50"
+            className="inline-flex min-w-[180px] items-center justify-center rounded-lg border border-black bg-white px-6 py-3 text-sm font-semibold text-black shadow-sm transition-colors hover:bg-neutral-100"
           >
-            Explore benefits
+            Request Demo
           </a>
         </motion.div>
 
@@ -75,7 +74,7 @@ export function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="mt-6 text-xs font-medium uppercase tracking-[0.16em] text-slate-500"
+          className="mt-6 text-xs font-medium text-slate-500"
         >
           Trusted by enterprise teams managing 10,000+ incidents monthly
         </motion.p>

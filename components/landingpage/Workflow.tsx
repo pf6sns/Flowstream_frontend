@@ -16,7 +16,10 @@ const steps = [
 // Named export so app/page.tsx can import { Workflow } from "@/components/landingpage/Workflow";
 export function Workflow() {
   return (
-    <section id="workflow" className="relative overflow-hidden bg-white py-24 sm:py-32">
+    <section
+      id="workflow"
+      className="relative overflow-hidden bg-gradient-to-b from-white to-[#e6f0ff] py-24 sm:py-32"
+    >
       <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -25,9 +28,18 @@ export function Workflow() {
           transition={{ duration: 0.6 }}
           className="mb-24 text-center"
         >
-          <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#0065ff]">
-            Process Roadmap
-          </span>
+          <div className="flex justify-center">
+            <div className="relative inline-flex items-center justify-center px-8 py-2">
+              {/* Decorative capsule background, not a button */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 rounded-full border border-[#bcd6ff] bg-[#e6f0ff]"
+              />
+              <span className="relative text-xs font-bold uppercase tracking-[0.2em] text-[#0065ff]">
+                PROCESS ROADMAP
+              </span>
+            </div>
+          </div>
           <h2 className="mt-4 font-display text-4xl font-bold tracking-tight text-[#111111] md:text-5xl">
             From Chaos to Order
           </h2>
@@ -55,10 +67,10 @@ export function Workflow() {
               >
                 {/* Content Card Side */}
                 <div className="ml-20 flex-1 md:ml-0 md:w-1/2">
-                  {/* Floating Step Number for Desktop */}
+                  {/* Step number directly above the card title (desktop only) */}
                   <span
-                    className={`absolute -top-10 hidden select-none text-6xl font-bold text-gray-100 md:block ${
-                      i % 2 !== 0 ? "left-0" : "right-0"
+                    className={`hidden md:block mb-2 text-6xl font-bold text-brand-75 ${
+                      i % 2 !== 0 ? "text-left" : "text-right"
                     }`}
                   >
                     0{i + 1}

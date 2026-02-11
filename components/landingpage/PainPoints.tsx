@@ -47,10 +47,18 @@ export function PainPoints() {
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">
-            The problem
-          </p>
-          <h2 className="mt-3 font-semibold text-2xl text-text sm:text-3xl md:text-4xl">
+          <div className="flex justify-center">
+            <div className="relative inline-flex items-center justify-center px-8 py-2">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 rounded-full border border-[#bcd6ff] bg-[#e6f0ff]"
+              />
+              <span className="relative text-xs font-semibold uppercase tracking-[0.2em] text-[#0065ff]">
+                THE PROBLEM
+              </span>
+            </div>
+          </div>
+          <h2 className="mt-3 font-semibold text-2xl text-black sm:text-3xl md:text-4xl">
             Your incident workflow is broken
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 md:text-base">
@@ -72,7 +80,7 @@ export function PainPoints() {
               <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50 text-brand">
                 <pain.icon className="h-5 w-5" />
               </div>
-              <h3 className="font-medium text-text">{pain.title}</h3>
+              <h3 className="font-medium text-black">{pain.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">{pain.desc}</p>
             </motion.div>
           ))}

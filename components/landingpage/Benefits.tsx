@@ -55,7 +55,17 @@ const Benefits = () => {
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#0065ff]">Business Impact</p>
+          <div className="flex justify-center">
+            <div className="relative inline-flex items-center justify-center px-8 py-2">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 rounded-full border border-[#bcd6ff] bg-[#e6f0ff]"
+              />
+              <span className="relative text-xs font-bold uppercase tracking-[0.2em] text-[#0065ff]">
+                BUSINESS IMPACT
+              </span>
+            </div>
+          </div>
           <h2 className="mt-4 font-display text-3xl font-bold text-[#111111] md:text-5xl">
             Measurable Results. Real ROI.
           </h2>
