@@ -17,12 +17,13 @@ export function FinalCTA() {
           transition={{ duration: 0.6 }}
         >
           <h2 className="mx-auto max-w-3xl font-semibold text-2xl text-black sm:text-3xl md:text-4xl">
-            Transform your incident management with{" "}
-            <span className="text-[#0065ff]">Agentic AI</span>
+            Modernize. Automate. Optimize.
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-slate-600 md:text-base">
-            Join forward-thinking enterprises that have eliminated manual triage and achieved faster
-            resolution times with  Flowstream.
+            From customer query to intelligent action — without operational chaos.
+          </p>
+          <p className="mx-auto mt-4 max-w-xl text-sm font-medium text-slate-800 md:text-base">
+            Intelligence should reduce friction. Automation should enhance execution.
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-4 sm:mt-8 sm:flex-row">
             <Link
