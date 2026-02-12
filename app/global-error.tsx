@@ -1,15 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-
-/**
- * Global error boundary for the App Router.
- *
- * This is used by Next.js when a rendering error happens during
- * prerendering or at runtime (including on _global-error).
- * Keep this component simple and avoid custom hooks/contexts
- * so that it can always render safely in all environments.
- */
 export default function GlobalError({
   error,
   reset,
@@ -17,10 +7,9 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  useEffect(() => {
-    // Log the error for observability in logs/monitoring
+  if (typeof window !== "undefined") {
     console.error("Global error boundary caught:", error);
-  }, [error]);
+  }
 
   return (
     <html lang="en">
@@ -44,7 +33,11 @@ export default function GlobalError({
               </button>
               <button
                 type="button"
-                onClick={() => (window.location.href = "/")}
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    window.location.href = "/";
+                  }
+                }}
                 className="inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
               >
                 Go to dashboard
