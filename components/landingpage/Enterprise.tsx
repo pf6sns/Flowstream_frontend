@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import { motion } from "framer-motion";
 import { Shield, Plug, Users, Scale, Zap, FileCheck } from "lucide-react";
@@ -40,7 +40,7 @@ export function Enterprise() {
   return (
     <section
       id="enterprise"
-      className="bg-gradient-to-b from-[#e6f0ff] to-white pt-8 pb-12 sm:pt-15 sm:pb-16"
+      className="bg-white pt-8 pb-12 sm:pt-15 sm:pb-16"
     >
       <div className="container mx-auto px-6">
         <motion.div
@@ -74,7 +74,7 @@ export function Enterprise() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08, duration: 0.5 }}
-              className="flex items-start gap-5 rounded-xl border border-slate-100 bg-white p-8 transition-all duration-300 hover:border-[#0065ff]/20 hover:shadow-lg"
+              className="flex items-start gap-5 rounded-xl border border-slate-100 bg-white p-8 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-[#0065ff]/20 hover:shadow-lg"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#e6f0ff] text-[#0065ff]">
                 <item.icon className="h-6 w-6" />

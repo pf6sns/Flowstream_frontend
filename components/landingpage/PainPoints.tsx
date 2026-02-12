@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import { motion } from "framer-motion";
 import { Clock, Mail, Unlink, EyeOff, Timer, MessageSquareOff } from "lucide-react";
@@ -75,7 +75,7 @@ export function PainPoints() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.05, duration: 0.45 }}
-              className="group rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg"
+              className="group rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-brand/40 hover:shadow-lg"
             >
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#e6f0ff] text-[#0065ff]">
                 <pain.icon className="h-5 w-5" />

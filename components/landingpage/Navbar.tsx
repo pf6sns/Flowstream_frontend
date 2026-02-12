@@ -24,9 +24,9 @@ export function LandingNavbar() {
           <span className="font-semibold text-text text-base sm:text-lg">
              Flowstream
           </span>
-          <span className="ml-1 hidden text-xs text-slate-500 sm:inline">
+          {/* <span className="ml-1 hidden text-xs text-slate-500 sm:inline">
             by SNS Square
-          </span>
+          </span> */}
         </div>
 
         {/* Desktop nav */}

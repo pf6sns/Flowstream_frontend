@@ -18,7 +18,7 @@ export function Workflow() {
   return (
     <section
       id="workflow"
-      className="relative overflow-hidden bg-[#e6f0ff] py-20 sm:py-24"
+      className="relative overflow-hidden bg-gradient-to-b from-white to-[#e6f0ff] py-20 sm:py-24"
     >
       <div className="container mx-auto px-6">
         <motion.div
@@ -61,25 +61,22 @@ export function Workflow() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-10%" }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className={`relative flex flex-col gap-4 md:flex-row md:items-center ${
-                  i % 2 !== 0 ? "md:flex-row-reverse" : ""
-                }`}
+                className={`group relative flex flex-col gap-4 md:flex-row md:items-center ${i % 2 !== 0 ? "md:flex-row-reverse" : ""
+                  }`}
               >
                 {/* Content Card Side */}
                 <div className="ml-20 flex-1 md:ml-0 md:w-1/2">
-                  {/* Step number directly above the card title (desktop only) */}
+                  {/* Step number overlapping the card content */}
                   <span
-                    className={`hidden md:block mt-2 mb-2 text-6xl font-bold text-[#0065ff]/70 ${
-                      i % 2 !== 0 ? "text-left" : "text-right"
-                    }`}
+                    className={`hidden md:block mt-2 text-6xl opacity-20 transition-opacity duration-300 group-hover:opacity-60 font-bold text-[#0065ff]/70 ${i % 2 !== 0 ? "text-left" : "text-right"
+                      }`}
                   >
                     0{i + 1}
                   </span>
 
                   <div
-                    className={`relative rounded-xl border border-slate-100 bg-slate-50/50 p-6 transition-all duration-300 hover:border-brand/30 hover:shadow-lg hover:shadow-brand/5 ${
-                      i % 2 !== 0 ? "md:text-left" : "md:text-right"
-                    }`}
+                    className={`relative z-10 rounded-xl border border-slate-100 bg-slate-50/50 p-6 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-brand/30 hover:shadow-lg hover:shadow-brand/5 ${i % 2 !== 0 ? "md:text-left" : "md:text-right"
+                      }`}
                   >
                     <h3 className="mb-2 font-display text-lg font-bold text-[#111111]">
                       {step.label}
