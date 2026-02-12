@@ -62,7 +62,7 @@ export function Enterprise() {
             </div>
           </div>
           <h2 className="mt-4 font-display text-3xl font-bold text-[#111111] md:text-5xl">
-            Built for Scale. Ready for Production.
+            Built for scale and production environments.
           </h2>
         </motion.div>
 

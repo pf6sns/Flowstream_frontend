@@ -4,13 +4,10 @@ import { motion } from "framer-motion";
 import { Mail, Brain, Ticket, Code2, Rocket, CheckCircle, Send } from "lucide-react";
 
 const steps = [
-  { icon: Mail, label: "Issue Raised", desc: "Issue comes in via email, Slack, or portal." },
-  { icon: Brain, label: "AI Analysis", desc: "Flowstream instantly classifies the intent, severity, and required expertise." },
-  { icon: Ticket, label: "Ticket Creation", desc: "A fully populated incident is created in ServiceNow/Jira with correct routing." },
-  { icon: Code2, label: "Automated Diagnosis", desc: "The system runs diagnostic scripts and suggests potential root causes." },
-  { icon: Rocket, label: "Remediation", desc: "Engineering approves AI-suggested fixes or implements code changes." },
-  { icon: CheckCircle, label: "Verification", desc: "Automated tests verify the fix in staging before deployment." },
-  { icon: Send, label: "Closure", desc: "Stakeholders are notified, and the ticket is closed with a complete audit trail." },
+  { icon: Mail, label: "Identify (ServiceNow)", desc: "Incidents, requests, and changes are intelligently categorized and enriched using AI." },
+  { icon: Brain, label: "Convert (AI Engine)", desc: "Relevant service items automatically generate structured Jira tasks with contextual intelligence." },
+  { icon: Ticket, label: "Execute (Jira)", desc: "Development teams act with full visibility and prioritized workload distribution." },
+  { icon: Code2, label: "Resolve & Sync (Unified System)", desc: "Status updates reflect instantly across systems, ensuring SLA transparency and compliance." },
 ];
 
 // Named export so app/page.tsx can import { Workflow } from "@/components/landingpage/Workflow";
@@ -41,11 +38,10 @@ export function Workflow() {
             </div>
           </div>
           <h2 className="mt-4 font-display text-4xl font-bold tracking-tight text-[#111111] md:text-5xl">
-            From Chaos to Order
+            From Incident to Resolution — Seamlessly
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-500">
-            Follow the journey of a single incident as it moves through our autonomous orchestration
-            layer.
+            <strong>Outcome:</strong> Faster resolution cycles. Reduced manual overhead. Seamless collaboration.
           </p>
         </motion.div>
 

@@ -1,38 +1,33 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Clock, Mail, Unlink, EyeOff, Timer, MessageSquareOff } from "lucide-react";
+import { Clock, RefreshCcw, Layers, AlertTriangle, AlertCircle } from "lucide-react";
 
 const pains = [
   {
+    icon: RefreshCcw,
+    title: "Manual ticket-to-task conversion",
+    desc: "ServiceNow incidents manually recreated in Jira, causing delays.",
+  },
+  {
     icon: Clock,
-    title: "Manual ticket creation",
-    desc: "Hours wasted manually logging, categorizing, and routing incidents across disconnected systems.",
+    title: "No real-time synchronization",
+    desc: "Development and ITSM teams lack instant status alignment.",
   },
   {
-    icon: Mail,
-    title: "Email overload",
-    desc: "Critical issues buried in inboxes — missed SLAs and frustrated customers.",
+    icon: Layers,
+    title: "Siloed prioritization",
+    desc: "Decisions made without full operational context.",
   },
   {
-    icon: Unlink,
-    title: "Siloed tools",
-    desc: "Email, ServiceNow, and Jira operating as islands — no unified view.",
+    icon: AlertTriangle,
+    title: "Triage bottlenecks",
+    desc: "Repetitive approvals and routing slow down execution.",
   },
   {
-    icon: EyeOff,
-    title: "Zero visibility",
-    desc: "No real-time insight into incident status, ownership, or resolution progress.",
-  },
-  {
-    icon: Timer,
-    title: "Slow resolution",
-    desc: "Manual handoffs and escalation delays push MTTR beyond acceptable thresholds.",
-  },
-  {
-    icon: MessageSquareOff,
-    title: "Poor communication",
-    desc: "Customers left in the dark with no automated updates throughout the lifecycle.",
+    icon: AlertCircle,
+    title: "SLA risk exposure",
+    desc: "Inconsistent tracking increases compliance risks.",
   },
 ];
 
@@ -59,11 +54,10 @@ export function PainPoints() {
             </div>
           </div>
           <h2 className="mt-3 font-semibold text-2xl text-black sm:text-3xl md:text-4xl">
-            Your incident workflow is broken
+            Disconnected Systems. Delayed Execution.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 md:text-base">
-            Enterprise teams lose thousands of hours annually to fragmented, manual incident
-            management processes.
+            Enterprise IT and project teams operate in parallel systems — creating friction, inefficiency, and visibility gaps.
           </p>
         </motion.div>
 
