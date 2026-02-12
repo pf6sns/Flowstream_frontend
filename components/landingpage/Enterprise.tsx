@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import { motion } from "framer-motion";
 import { Shield, Plug, Users, Scale, Zap, FileCheck } from "lucide-react";
@@ -40,7 +40,7 @@ export function Enterprise() {
   return (
     <section
       id="enterprise"
-      className="bg-gradient-to-b from-[#e6f0ff] to-white pt-8 pb-12 sm:pt-15 sm:pb-16"
+      className="bg-white pt-8 pb-12 sm:pt-15 sm:pb-16"
     >
       <div className="container mx-auto px-6">
         <motion.div

@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import { motion } from "framer-motion";
 import { Brain, GitPullRequest, Link2, Activity, Bell, CheckCircle2 } from "lucide-react";
@@ -40,7 +40,7 @@ export function Solution() {
   return (
     <section
       id="solution"
-      className="bg-[#e6f0ff] py-16 sm:py-20"
+      className="bg-gradient-to-b from-white to-[#e6f0ff] py-16 sm:py-20"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -65,7 +65,7 @@ export function Solution() {
             One AI Agent. Complete Orchestration.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 md:text-base">
-             Flowstream replaces manual handoffs with intelligent, end-to-end automation across your
+            Flowstream replaces manual handoffs with intelligent, end-to-end automation across your
             entire incident lifecycle.
           </p>
         </motion.div>

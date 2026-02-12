@@ -1,12 +1,14 @@
- "use client";
+"use client";
 
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
+import { Footer } from "@/components/landingpage/Footer";
+
 export function FinalCTA() {
   return (
-    <section className="bg-gradient-to-b from-white to-[#e6f0ff] pt-2 pb-4 sm:pt-6">
+    <section className="bg-gradient-to-b from-white to-[#e6f0ff] pt-2 sm:pt-6">
       <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -39,6 +41,7 @@ export function FinalCTA() {
           </div>
         </motion.div>
       </div>
+      <Footer />
     </section>
   );
 }
