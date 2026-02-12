@@ -12,7 +12,7 @@ export function Footer() {
             <div className="flex h-7 w-7 items-center justify-center rounded-md bg-brand">
               <span className="text-xs font-bold text-white">O</span>
             </div>
-            <span className="text-sm font-semibold text-text">OrchestrAI</span>
+            <span className="text-sm font-semibold text-text">Flowstream</span>
             <span className="text-xs text-slate-500">by SNS Square</span>
           </div>
 

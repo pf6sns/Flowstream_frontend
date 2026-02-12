@@ -13,14 +13,14 @@ const options = {};
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === "production") {
   const globalWithMongo = global as typeof globalThis & {
     _mongoClientPromise?: Promise<MongoClient>;
   };
 
   if (!globalWithMongo._mongoClientPromise) {
     if (!uri) {
-      console.error("MONGODB_URI missing in development");
+      console.error("MONGODB_URI missing in Production");
       throw new Error("Database configuration missing");
     }
 
