@@ -1,4 +1,4 @@
- "use client";
+"use client";
 import { motion, useInView, useMotionValue, useTransform, animate } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { Timer, TrendingDown, ShieldCheck, Zap, Bell, FileText } from "lucide-react";
@@ -70,7 +70,7 @@ const Benefits = () => {
             Measurable Results. Real ROI.
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-500">
-             Flowstream delivers quantifiable improvements across resolution speed, operational cost, and service quality.
+            Flowstream delivers quantifiable improvements across resolution speed, operational cost, and service quality.
           </p>
         </motion.div>
 
@@ -82,7 +82,7 @@ const Benefits = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08, duration: 0.5 }}
-              className="rounded-2xl border border-slate-100 bg-white p-6 text-center transition-all duration-300 hover:border-[#e6f0ff] hover:shadow-xl hover:shadow-brand/5"
+              className="rounded-2xl border border-slate-100 bg-white p-6 text-center shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-[#e6f0ff] hover:shadow-xl hover:shadow-brand/5"
             >
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#e6f0ff] text-[#0065ff]">
                 <item.icon className="h-7 w-7" />

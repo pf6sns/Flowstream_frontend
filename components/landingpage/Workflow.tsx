@@ -75,7 +75,7 @@ export function Workflow() {
                   </span>
 
                   <div
-                    className={`relative z-10 rounded-xl border border-slate-100 bg-slate-50/50 p-6 transition-all duration-300 hover:border-brand/30 hover:shadow-lg hover:shadow-brand/5 ${i % 2 !== 0 ? "md:text-left" : "md:text-right"
+                    className={`relative z-10 rounded-xl border border-slate-100 bg-slate-50/50 p-6 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-brand/30 hover:shadow-lg hover:shadow-brand/5 ${i % 2 !== 0 ? "md:text-left" : "md:text-right"
                       }`}
                   >
                     <h3 className="mb-2 font-display text-lg font-bold text-[#111111]">
