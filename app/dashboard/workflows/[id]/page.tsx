@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import {
     Loader2, Mail, ExternalLink, Ticket, LayoutList,
     User, BrainCircuit, ArrowRight, CheckCircle2,

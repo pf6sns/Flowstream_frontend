@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 type IntegrationCardProps = {
   title: string;
@@ -76,11 +76,10 @@ export function IntegrationCard({
 
       {testResult && (
         <div
-          className={`mt-3 flex items-center gap-2 rounded-md border px-2 py-1 text-[11px] ${
-            testResult.status === "success"
+          className={`mt-3 flex items-center gap-2 rounded-md border px-2 py-1 text-[11px] ${testResult.status === "success"
               ? "border-emerald-200 bg-emerald-50 text-emerald-700"
               : "border-red-200 bg-red-50 text-red-700"
-          }`}
+            }`}
         >
           {testResult.status === "success" ? (
             <CheckCircle2 className="h-3 w-3" />

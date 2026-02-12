@@ -8,7 +8,7 @@ import {
     Clock, CheckCircle2, AlertCircle, Loader2,
     Activity, Inbox, Layers, Terminal, ArrowRight, Download
 } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import {
