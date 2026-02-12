@@ -6,61 +6,85 @@ import type { CompanyIntegration } from "@/lib/db/models";
 
 type IntegrationType = CompanyIntegration["integrationType"];
 
+/**
+ * Build config to return to frontend.
+ * - Non-sensitive fields come from publicConfig (stored in plain text)
+ * - Sensitive fields (passwords, API keys) are returned with:
+ *   - The actual decrypted value (so user can view it with eye toggle)
+ *   - A flag indicating if the value exists (hasToken, hasPassword, hasApiKey)
+ */
 function buildSafeConfig(
   integrationType: IntegrationType,
   rawConfig: Record<string, any> | null,
   publicConfig?: Record<string, unknown>,
 ) {
-  if (!rawConfig) return undefined;
-
   switch (integrationType) {
-    case "jira":
-      // Never expose full API token back to UI
-      {
-        const token =
-          typeof rawConfig.apiToken === "string" ? rawConfig.apiToken : "";
-        const hasToken = Boolean(token);
-        const prefix = hasToken ? token.slice(0, 5) : "";
-        const maskedToken = hasToken
-          ? prefix + "*".repeat(Math.max(token.length - 5, 0))
+    case "jira": {
+      const apiToken =
+        rawConfig && typeof rawConfig.apiToken === "string"
+          ? rawConfig.apiToken
           : "";
+      const hasToken = Boolean(apiToken);
 
       return {
-        baseUrl:
-          (publicConfig?.baseUrl as string | undefined) ??
-          (rawConfig.baseUrl ?? ""),
-        email:
-          (publicConfig?.email as string | undefined) ??
-          (rawConfig.email ?? ""),
-        projectKey:
-          (publicConfig?.projectKey as string | undefined) ??
-          (rawConfig.projectKey ?? ""),
-        issueType:
-          (publicConfig?.issueType as string | undefined) ??
-          (rawConfig.issueType ?? ""),
-          hasToken,
-          maskedToken,
+        baseUrl: (publicConfig?.baseUrl as string) ?? "",
+        email: (publicConfig?.email as string) ?? "",
+        projectKey: (publicConfig?.projectKey as string) ?? "",
+        issueType: (publicConfig?.issueType as string) ?? "",
+        hasToken,
+        // Return actual token so user can view it with eye toggle
+        apiToken: apiToken,
       };
-      }
-    case "servicenow":
+    }
+    case "servicenow": {
+      const password =
+        rawConfig && typeof rawConfig.password === "string"
+          ? rawConfig.password
+          : "";
+      const hasPassword = Boolean(password);
+
       return {
-        instanceUrl: rawConfig.instanceUrl ?? "",
-        username: rawConfig.username ?? "",
-        table: rawConfig.table ?? "incident",
+        instanceUrl: (publicConfig?.instanceUrl as string) ?? "",
+        username: (publicConfig?.username as string) ?? "",
+        table: (publicConfig?.table as string) ?? "incident",
+        hasPassword,
+        // Return actual password so user can view it with eye toggle
+        password: password,
       };
-    case "gmail":
+    }
+    case "gmail": {
+      const password =
+        rawConfig && typeof rawConfig.password === "string"
+          ? rawConfig.password
+          : "";
+      const hasPassword = Boolean(password);
+
       return {
-        provider: rawConfig.provider ?? "gmail",
-        smtpHost: rawConfig.smtpHost ?? "",
-        smtpPort: rawConfig.smtpPort ?? 587,
-        fromName: rawConfig.fromName ?? "",
-        email: rawConfig.username ?? rawConfig.fromEmail ?? "",
+        provider: (publicConfig?.provider as string) ?? "gmail",
+        smtpHost: (publicConfig?.smtpHost as string) ?? "",
+        smtpPort: (publicConfig?.smtpPort as number) ?? 587,
+        fromName: (publicConfig?.fromName as string) ?? "",
+        fromEmail: (publicConfig?.fromEmail as string) ?? "",
+        username: (publicConfig?.username as string) ?? "",
+        hasPassword,
+        // Return actual password so user can view it with eye toggle
+        password: password,
       };
-    case "groq":
-      // Only expose provider selection, never API keys
+    }
+    case "groq": {
+      const apiKey =
+        rawConfig && typeof rawConfig.apiKey === "string"
+          ? rawConfig.apiKey
+          : "";
+      const hasApiKey = Boolean(apiKey);
+
       return {
-        provider: rawConfig.provider ?? "groq",
+        provider: (publicConfig?.provider as string) ?? "groq",
+        hasApiKey,
+        // Return actual API key so user can view it with eye toggle
+        apiKey: apiKey,
       };
+    }
     default:
       return undefined;
   }
@@ -147,37 +171,59 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // For Jira we keep non-sensitive metadata (URL, email, etc.) in plain JSON
-    // and only encrypt the sensitive parts (like API tokens).
+    // Store non-sensitive fields in publicConfig (plain text in DB)
+    // Store only sensitive fields (passwords, API keys) encrypted in configJson
     let encryptedConfig: string;
     let publicConfig: Record<string, unknown> | undefined;
 
     if (integrationType === "jira") {
-      const {
-        baseUrl,
-        email,
-        projectKey,
-        issueType,
-        apiToken,
-        ...rest
-      } = config as Record<string, unknown>;
+      const { apiToken, ...nonSensitive } = config as Record<string, unknown>;
 
       publicConfig = {
-        baseUrl: baseUrl ?? "",
-        email: email ?? "",
-        projectKey,
-        issueType,
+        baseUrl: nonSensitive.baseUrl ?? "",
+        email: nonSensitive.email ?? "",
+        projectKey: nonSensitive.projectKey ?? "",
+        issueType: nonSensitive.issueType ?? "",
       };
 
-      // Only sensitive values + any extra fields go into the encrypted blob.
-      const sensitivePayload = {
-        apiToken,
-        ...rest,
+      // Only encrypt the API token
+      encryptedConfig = encrypt(JSON.stringify({ apiToken }));
+    } else if (integrationType === "servicenow") {
+      const { password, ...nonSensitive } = config as Record<string, unknown>;
+
+      publicConfig = {
+        instanceUrl: nonSensitive.instanceUrl ?? "",
+        username: nonSensitive.username ?? "",
+        table: nonSensitive.table ?? "incident",
       };
 
-      encryptedConfig = encrypt(JSON.stringify(sensitivePayload));
+      // Only encrypt the password
+      encryptedConfig = encrypt(JSON.stringify({ password }));
+    } else if (integrationType === "gmail") {
+      const { password, ...nonSensitive } = config as Record<string, unknown>;
+
+      publicConfig = {
+        provider: nonSensitive.provider ?? "gmail",
+        smtpHost: nonSensitive.smtpHost ?? "",
+        smtpPort: nonSensitive.smtpPort ?? 587,
+        username: nonSensitive.username ?? "",
+        fromEmail: nonSensitive.fromEmail ?? "",
+        fromName: nonSensitive.fromName ?? "",
+      };
+
+      // Only encrypt the password
+      encryptedConfig = encrypt(JSON.stringify({ password }));
+    } else if (integrationType === "groq") {
+      const { apiKey, ...nonSensitive } = config as Record<string, unknown>;
+
+      publicConfig = {
+        provider: nonSensitive.provider ?? "groq",
+      };
+
+      // Only encrypt the API key
+      encryptedConfig = encrypt(JSON.stringify({ apiKey }));
     } else {
-      // For other integrations we still encrypt the full config object.
+      // Fallback: encrypt entire config
       encryptedConfig = encrypt(JSON.stringify(config));
     }
 
@@ -190,13 +236,23 @@ export async function POST(request: NextRequest) {
     });
 
     if (existing) {
-      // For Jira, if no new apiToken was provided, keep the existing encrypted token
+      // If no new sensitive value was provided, keep the existing encrypted config
       let configJsonToStore = encryptedConfig;
-      if (integrationType === "jira") {
-        const tokenFromRequest = (config as Record<string, unknown>).apiToken;
+
+      const sensitiveFieldMap: Record<IntegrationType, string> = {
+        jira: "apiToken",
+        servicenow: "password",
+        gmail: "password",
+        groq: "apiKey",
+      };
+
+      const sensitiveField = sensitiveFieldMap[integrationType];
+      if (sensitiveField) {
+        const sensitiveValue = (config as Record<string, unknown>)[sensitiveField];
+        // If sensitive field is empty or not provided, keep existing encrypted config
         if (
-          typeof tokenFromRequest !== "string" ||
-          tokenFromRequest.trim().length === 0
+          typeof sensitiveValue !== "string" ||
+          sensitiveValue.trim().length === 0
         ) {
           configJsonToStore = existing.configJson;
         }

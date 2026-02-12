@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
  * - Does NOT clear cookies or force logout; it only redirects when there is no session.
  */
 export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const pathname = request?.nextUrl?.pathname ?? "";
 
   // Public routes that should always be accessible
   const publicPaths = ["/", "/login", "/signup", "/api/health"];

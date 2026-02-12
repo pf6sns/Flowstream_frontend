@@ -60,6 +60,7 @@ export interface Workflow {
   jiraTicketId?: string;
   workflowData: Record<string, unknown>; // JSON object storing all steps
   startedAt: Date;
+  createdAt: Date;
   completedAt?: Date;
   errorMessage?: string;
 }
