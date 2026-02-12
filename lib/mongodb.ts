@@ -1,43 +1,54 @@
 import { MongoClient, Db } from "mongodb";
-
-if (!process.env.MONGODB_URI) {
-  throw new Error("Please add your Mongo URI to .env.local");
-}
-
-const uri: string = process.env.MONGODB_URI;
+console.log("=== MONGO DEBUG START ===");
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log(
+  "MONGODB_URI exists?",
+  process.env.MONGODB_URI ? "YES" : "NO"
+);
+console.log("MONGODB_DB_NAME:", process.env.MONGODB_DB_NAME);
+console.log("=== MONGO DEBUG END ===");
+const uri = process.env.MONGODB_URI as string;
 const options = {};
 
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
 if (process.env.NODE_ENV === "development") {
-  // In development mode, use a global variable so that the value
-  // is preserved across module reloads caused by HMR (Hot Module Replacement).
-  let globalWithMongo = global as typeof globalThis & {
-    _mongoClientPromise?: Promise<MongoClient>;
-  };
+  const globalWithMongo = global as typeof globalThis & {
+    _mongoClientPromise?: Promise<MongoClient>;
+  };
 
-  if (!globalWithMongo._mongoClientPromise) {
-    client = new MongoClient(uri, options);
-    globalWithMongo._mongoClientPromise = client.connect();
-  }
-  clientPromise = globalWithMongo._mongoClientPromise;
+  if (!globalWithMongo._mongoClientPromise) {
+    if (!uri) {
+      console.error("MONGODB_URI missing in development");
+      throw new Error("Database configuration missing");
+    }
+
+    client = new MongoClient(uri, options);
+    globalWithMongo._mongoClientPromise = client.connect();
+  }
+
+  clientPromise = globalWithMongo._mongoClientPromise;
 } else {
-  // In production mode, it's best to not use a global variable.
-  client = new MongoClient(uri, options);
-  clientPromise = client.connect();
+  if (!uri) {
+    console.error("MONGODB_URI missing in production");
+    throw new Error("Database configuration missing");
+  }
+
+  client = new MongoClient(uri, options);
+  clientPromise = client.connect();
 }
 
-// Export a module-scoped MongoClient promise. By doing this in a
-// separate module, the client can be shared across functions.
 export default clientPromise;
 
-/**
- * Get database instance
- */
 export async function getDatabase(): Promise<Db> {
-  const client = await clientPromise;
-  // IMPORTANT: Avoid leading/trailing spaces in DB name; they produce invalid namespaces
-  // like ` Flowstream.users` and cause MongoDB code 73 (InvalidNamespace).
-  return client.db(process.env.MONGODB_DB_NAME || "Flowstream");
+  const client = await clientPromise;
+
+  const dbName = process.env.MONGODB_DB_NAME || "Flowstream";
+
+  if (!dbName) {
+    console.error("MONGODB_DB_NAME missing");
+  }
+
+  return client.db(dbName);
 }
