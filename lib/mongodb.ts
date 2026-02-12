@@ -19,13 +19,27 @@ if (process.env.NODE_ENV === "development") {
 
   if (!globalWithMongo._mongoClientPromise) {
     client = new MongoClient(uri, options);
-    globalWithMongo._mongoClientPromise = client.connect();
+    console.log("🔄 Connecting to MongoDB in development mode...", { uri });
+    globalWithMongo._mongoClientPromise = client.connect().then((conn) => {
+      console.log("✅ MongoDB connected successfully");
+      return conn;
+    }).catch((err) => {
+      console.error("❌ MongoDB connection failed:", err.message);
+      throw err;
+    });
   }
   clientPromise = globalWithMongo._mongoClientPromise;
 } else {
   // In production mode, it's best to not use a global variable.
   client = new MongoClient(uri, options);
-  clientPromise = client.connect();
+  console.log("🔄 Connecting to MongoDB in production mode...", { uri });
+  clientPromise = client.connect().then((conn) => {
+    console.log("✅ MongoDB connected successfully");
+    return conn;
+  }).catch((err) => {
+    console.error("❌ MongoDB connection failed:", err.message);
+    throw err;
+  });
 }
 
 // Export a module-scoped MongoClient promise. By doing this in a
