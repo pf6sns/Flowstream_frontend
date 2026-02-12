@@ -6,7 +6,7 @@ const { MongoClient } = require("mongodb");
 const bcrypt = require("bcryptjs");
 
 // 1) Load environment variables from .env.local
-dotenv.config({ path: ".env.local" });
+dotenv.config({ path: ".env" });
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
