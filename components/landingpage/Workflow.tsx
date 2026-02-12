@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 import { Mail, Brain, Ticket, Code2, Rocket, CheckCircle, Send } from "lucide-react";
 
 const steps = [
-  { icon: Mail, label: "Issue Raised", desc: "User reports an issue via email, Slack, or portal. No complex forms required." },
-  { icon: Brain, label: "AI Analysis", desc: " Flowstream instantly classifies the intent, severity, and required expertise." },
+  { icon: Mail, label: "Issue Raised", desc: "Issue comes in via email, Slack, or portal." },
+  { icon: Brain, label: "AI Analysis", desc: "Flowstream instantly classifies the intent, severity, and required expertise." },
   { icon: Ticket, label: "Ticket Creation", desc: "A fully populated incident is created in ServiceNow/Jira with correct routing." },
   { icon: Code2, label: "Automated Diagnosis", desc: "The system runs diagnostic scripts and suggests potential root causes." },
   { icon: Rocket, label: "Remediation", desc: "Engineering approves AI-suggested fixes or implements code changes." },
@@ -18,7 +18,7 @@ export function Workflow() {
   return (
     <section
       id="workflow"
-      className="relative overflow-hidden bg-gradient-to-b from-white to-[#e6f0ff] py-24 sm:py-32"
+      className="relative overflow-hidden bg-[#e6f0ff] py-20 sm:py-24"
     >
       <div className="container mx-auto px-6">
         <motion.div
@@ -53,7 +53,7 @@ export function Workflow() {
           {/* Vertical central line - Desktop */}
           <div className="absolute left-[30px] top-0 h-full w-px bg-slate-200 md:left-1/2 md:-translate-x-1/2" />
 
-          <div className="flex flex-col gap-16 md:gap-24">
+          <div className="flex flex-col gap-10 md:gap-10">
             {steps.map((step, i) => (
               <motion.div
                 key={step.label}
@@ -61,7 +61,7 @@ export function Workflow() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-10%" }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className={`relative flex flex-col gap-8 md:flex-row md:items-center ${
+                className={`relative flex flex-col gap-4 md:flex-row md:items-center ${
                   i % 2 !== 0 ? "md:flex-row-reverse" : ""
                 }`}
               >
@@ -77,14 +77,14 @@ export function Workflow() {
                   </span>
 
                   <div
-                    className={`relative rounded-xl border border-slate-100 bg-slate-50/50 p-8 transition-all duration-300 hover:border-brand/30 hover:shadow-lg hover:shadow-brand/5 ${
+                    className={`relative rounded-xl border border-slate-100 bg-slate-50/50 p-6 transition-all duration-300 hover:border-brand/30 hover:shadow-lg hover:shadow-brand/5 ${
                       i % 2 !== 0 ? "md:text-left" : "md:text-right"
                     }`}
                   >
-                    <h3 className="mb-3 font-display text-xl font-bold text-[#111111]">
+                    <h3 className="mb-2 font-display text-lg font-bold text-[#111111]">
                       {step.label}
                     </h3>
-                    <p className="text-sm leading-relaxed text-gray-600">{step.desc}</p>
+                    <p className="text-sm leading-snug text-gray-600">{step.desc}</p>
 
                     {/* Mobile Only: Step indicator inside card */}
                     <div className="mt-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#0065ff] md:hidden">

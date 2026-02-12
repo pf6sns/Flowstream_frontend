@@ -46,7 +46,7 @@ const Counter = ({ value }: { value: string }) => {
 
 const Benefits = () => {
   return (
-    <section id="benefits" className="bg-white py-24 sm:py-32">
+    <section id="benefits" className="bg-white py-20 sm:py-24">
       <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
