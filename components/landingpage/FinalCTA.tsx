@@ -27,16 +27,16 @@ export function FinalCTA() {
           <div className="mt-6 flex flex-col items-center justify-center gap-4 sm:mt-8 sm:flex-row">
             <Link
               href="/signup"
-              className="inline-flex min-w-[200px] items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-sm font-semibold text-white shadow-sm transition-transform hover:-translate-y-0.5 hover:bg-black"
+              className="inline-flex min-w-[200px] items-center justify-center gap-2 rounded-lg bg-brand px-8 py-4 text-base font-bold text-white shadow-lg transition-all hover:scale-105 hover:bg-brand-600 active:scale-95"
             >
-              Request demo
-              <ArrowRight className="h-4 w-4" />
+              Let's Start
+              <ArrowRight className="h-5 w-5" />
             </Link>
             <Link
               href="/login"
-              className="inline-flex min-w-[200px] items-center justify-center rounded-lg border border-black bg-white px-6 py-3 text-sm font-semibold text-black shadow-sm transition-colors hover:bg-neutral-100"
+              className="inline-flex min-w-[200px] items-center justify-center rounded-lg border border-slate-200 bg-white px-8 py-4 text-base font-bold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:border-slate-300"
             >
-              Talk to sales
+              Sign In
             </Link>
           </div>
         </motion.div>

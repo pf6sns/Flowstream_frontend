@@ -50,13 +50,16 @@ export async function POST(request: NextRequest) {
                 });
 
                 if (!existing) {
+                    const now = new Date();
                     await workflows.insertOne({
                         companyId: user.companyId,
                         emailId: ticket.email.messageId || `email-${Date.now()}-${Math.random()}`,
                         emailSubject: ticket.summary.short_description || ticket.email.subject,
                         emailFrom: ticket.email.from,
                         status: 'completed',
-                        startedAt: new Date(),
+                        startedAt: now,
+                        createdAt: now,
+                        completedAt: now,
                         servicenowTicketId: ticket.ticket_number,
                         jiraTicketId: ticket.jira_ticket ? ticket.jira_ticket.key : null,
                         workflowData: {

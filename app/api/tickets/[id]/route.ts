@@ -105,25 +105,18 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             ticket = await ticketsCollection.findOne({ companyId: user.companyId, servicenowTicketId: id });
         }
 
-        // Fallback 2: Real-time fetch from ServiceNow if looking like a ticket number (INC*, RITM*, etc.)
+        // Fallback 2: Fetch single incident from ServiceNow by ticket number (INC*, RITM*, TASK*)
         if (!ticket && (id.startsWith('INC') || id.startsWith('RITM') || id.startsWith('TASK'))) {
             try {
-                // Fetch all/recent tickets from ServiceNow and find match
-                // Note: In a production app, we would use a specific GET /table/incident?sysparm_query=number=ID endpoint
-                // For now, adhering to the existing client pattern
-                const tickets = await servicenowClient.fetchTickets();
-                const externalTicket = tickets.find(t => t.number === id);
-
+                const externalTicket = await servicenowClient.fetchTicketByNumber(id);
                 if (externalTicket) {
-                    // Try to find linked workflow
                     const workflowsCollection = await Collections.workflows();
                     const linkedWorkflow = await workflowsCollection.findOne({
                         companyId: user.companyId,
                         servicenowTicketId: externalTicket.number
                     });
-
                     return NextResponse.json({
-                        _id: `sn-${externalTicket.sys_id}`, // Virtual ID
+                        _id: `sn-${externalTicket.sys_id}`,
                         servicenowTicketId: externalTicket.number,
                         subject: externalTicket.short_description,
                         description: externalTicket.description,
@@ -142,19 +135,16 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             }
         }
 
-        // Fallback 3: Real-time fetch from Jira if looking like a Jira key (PROJECT-123)
+        // Fallback 3: Fetch single issue from Jira by key (e.g. MA-112)
         if (!ticket && id.includes('-') && !id.startsWith('sn-') && !id.startsWith('jira-')) {
             try {
-                const issues = await jiraClient.fetchIssues();
-                const externalIssue = issues.find(i => i.key === id);
-
+                const externalIssue = await jiraClient.fetchIssueByKey(id);
                 if (externalIssue) {
                     const workflowsCollection = await Collections.workflows();
                     const linkedWorkflow = await workflowsCollection.findOne({
                         companyId: user.companyId,
                         jiraTicketId: externalIssue.key
                     });
-
                     return NextResponse.json({
                         _id: `jira-${externalIssue.id}`,
                         jiraTicketId: externalIssue.key,

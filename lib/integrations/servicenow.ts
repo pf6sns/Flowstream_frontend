@@ -17,6 +17,7 @@ export interface ServiceNowTicket {
     caller_id?: string;
     sys_created_on: string;
     sys_updated_on: string;
+    jira_ticket_id?: string;
 }
 
 export class ServiceNowClient {

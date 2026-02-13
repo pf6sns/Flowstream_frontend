@@ -5,6 +5,14 @@
   --background: #ffffff;
   --foreground: #242424;
   --text: #242424;
+  /* Brand colors from Tailwind config – for auth gradient */
+  --brand-50: #e6f0ff;
+  --brand-75: #96c0ff;
+  --brand-100: #6ba6ff;
+  --brand-200: #2b7fff;
+  --brand: #0065ff;
+  --brand-400: #0047b3;
+  --brand-500: #003e9c;
 }
 
 @theme inline {
@@ -34,6 +42,33 @@ body {
   border-color: #0065ff;
 }
 
+/* Auth pages blue gradient – uses brand colors from Tailwind config */
+@keyframes auth-gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.auth-gradient-bg {
+  background: linear-gradient(
+    135deg,
+    var(--brand-50) 0%,
+    var(--brand-75) 20%,
+    var(--brand-100) 40%,
+    var(--brand) 60%,
+    var(--brand-400) 80%,
+    var(--brand-500) 100%
+  );
+  background-size: 200% 200%;
+  animation: auth-gradient-shift 15s ease-in-out infinite;
+}
+
 /* Animations */
 @keyframes fade-in {
   from {
@@ -48,4 +83,15 @@ body {
 
 .animate-fade-in {
   animation: fade-in 0.3s ease-out;
+}
+
+/* Dashboard highlight card gradient (brand) */
+.dashboard-card-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--brand-200) 0%,
+    var(--brand) 50%,
+    var(--brand-400) 100%
+  );
+  border: none;
 }

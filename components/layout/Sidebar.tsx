@@ -12,7 +12,7 @@ type NavItem = {
 };
 
 const mainNav: NavItem[] = [
-  { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Workflows", href: "/dashboard/workflows", icon: Workflow },
   { name: "Tickets", href: "/dashboard/tickets", icon: Ticket },
   { name: "Integrations", href: "/dashboard/integrations", icon: PlugZap },
@@ -64,7 +64,9 @@ export const Sidebar: React.FC = () => {
         {/* Brand */}
         <div className="mb-8 flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand text-white shadow-sm">
-            <span className="text-base font-bold">F</span>
+            <span className="text-base font-bold uppercase tracking-tight">
+              fs
+            </span>
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-semibold text-text">Flowstream</span>
@@ -74,27 +76,35 @@ export const Sidebar: React.FC = () => {
           </div>
         </div>
 
-        {/* Main nav */}
-        <nav className="space-y-1 text-sm font-medium">
-          {mainNav.map((item) => {
-            const isActive = pathname === item.href;
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
-                  isActive
-                    ? "bg-brand text-white shadow-sm"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                <span>{item.name}</span>
-              </Link>
-            );
-          })}
-        </nav>
+        {/* Menu: Dashboard, Workflows, Tickets, Integrations */}
+        <div className="flex flex-col gap-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 px-3">
+            Menu
+          </p>
+          <nav className="space-y-1 text-sm font-medium">
+            {mainNav.map((item) => {
+              const isActive =
+                item.href === "/dashboard"
+                  ? pathname === "/dashboard"
+                  : pathname === item.href || pathname.startsWith(item.href + "/");
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors ${
+                    isActive
+                      ? "bg-brand text-white shadow-sm"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  }`}
+                >
+                  <Icon className="h-4 w-4 shrink-0" />
+                  <span>{item.name}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
 
         {/* User info + account menu trigger */}
         <div className="mt-auto pt-6 text-xs text-slate-400">

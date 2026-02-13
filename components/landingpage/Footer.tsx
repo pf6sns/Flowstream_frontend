@@ -10,7 +10,9 @@ export function Footer() {
         <div className="flex flex-col items-center justify-between gap-6 px-4 sm:flex-row sm:px-6 lg:px-8">
           <div className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-md bg-brand">
-              <span className="text-xs font-bold text-white">O</span>
+              <span className="text-xs font-bold uppercase tracking-tight text-white">
+                fs
+              </span>
             </div>
             <span className="text-sm font-semibold text-text">Flowstream</span>
             {/* <span className="text-xs text-slate-500">by SNS Square</span> */}

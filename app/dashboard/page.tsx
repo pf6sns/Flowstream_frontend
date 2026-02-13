@@ -1,11 +1,22 @@
 "use client";
 
 import {
-  Activity, Loader2, Zap, Shield, RefreshCw, Terminal, LayoutDashboard, CheckCircle, FileText, Briefcase, TrendingUp
+  Activity,
+  Loader2,
+  Zap,
+  RefreshCw,
+  LayoutDashboard,
+  CheckCircle,
+  FileText,
+  Briefcase,
+  TrendingUp,
+  BarChart3,
+  Shield,
+  PlugZap,
 } from "lucide-react";
-import { Button } from "@/components/ui/button"; 
+import { Button } from "@/components/ui/button";
 import { useEffect, useState, useCallback } from "react";
-import { formatDistanceToNow, format } from "date-fns";
+import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -40,10 +51,12 @@ export default function DashboardPage() {
 
   if (loading && !data) {
     return (
-      <div className="flex h-screen items-center justify-center bg-white">
+      <div className="flex h-screen items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0065ff]" />
-          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Loading Analytics...</span>
+          <Loader2 className="h-10 w-10 animate-spin text-brand" />
+          <span className="text-sm font-medium text-slate-500">
+            Loading dashboard…
+          </span>
         </div>
       </div>
     );
@@ -53,255 +66,393 @@ export default function DashboardPage() {
 
   const mainStats = [
     {
-      label: "Global Resolved",
-      value: stats?.globalResolved || 0,
-      sub: "Completed Tasks",
-      icon: <CheckCircle className="h-4 w-4 text-white" />,
-      color: "bg-emerald-500",
-      delta: "+12%"
+      label: "Resolved",
+      value: stats?.globalResolved ?? 0,
+      sub: "vs last period",
+      icon: CheckCircle,
+      highlight: true,
+      delta: "+12%",
+      deltaPositive: true,
     },
     {
-      label: "In Progress",
-      value: stats?.globalInProgress || 0,
-      sub: "Active Engineering",
-      icon: <TrendingUp className="h-4 w-4 text-white" />,
-      color: "bg-[#0065ff]",
-      delta: "Stable"
+      label: "In progress",
+      value: stats?.globalInProgress ?? 0,
+      sub: "Active",
+      icon: TrendingUp,
+      highlight: false,
+      delta: "Stable",
+      deltaPositive: null,
     },
     {
-      label: "Volume",
-      value: stats?.total || 0,
-      sub: "Tickets Identified",
-      icon: <FileText className="h-4 w-4 text-white" />,
-      color: "bg-indigo-500",
-      delta: range.toUpperCase()
+      label: "Total volume",
+      value: stats?.total ?? 0,
+      sub: "Tickets",
+      icon: FileText,
+      highlight: false,
+      delta: range.charAt(0).toUpperCase() + range.slice(1),
+      deltaPositive: null,
     },
     {
-      label: "AI Accuracy",
+      label: "AI confidence",
       value: "98.2%",
-      sub: "Confidence Level",
-      icon: <Zap className="h-4 w-4 text-white" />,
-      color: "bg-amber-500",
-      delta: "Optimal"
+      sub: "Optimal",
+      icon: Zap,
+      highlight: false,
+      delta: "Optimal",
+      deltaPositive: true,
     },
   ];
 
-  const workflowSteps = liveWorkflow?.workflowData?.steps || [
-    { name: "System Standby - Monitoring Sockets", status: "pending" }
-  ];
+  const workflowSteps =
+    liveWorkflow?.workflowData?.steps ?? [
+      { name: "System standby — monitoring", status: "pending" },
+    ];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 p-6 lg:p-10 font-sans">
-      {/* HUD HEADER */}
-      <header className="flex flex-col gap-6 mb-8 border-b border-slate-200 pb-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="bg-[#0065ff] p-2.5 rounded-sm shadow-lg">
-              <LayoutDashboard className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <h1 className="text-2xl font-black uppercase tracking-tighter">Ops Dashboard</h1>
-                <Badge className="bg-emerald-50 text-emerald-700 border-emerald-100 rounded-none text-[9px] font-black uppercase">Active Hub</Badge>
-              </div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                Data Sync: {format(lastUpdated, 'HH:mm:ss')} • Zone: UTC+5:30
-              </p>
-            </div>
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100/50 text-slate-900 p-6 lg:p-10 font-sans">
+      {/* Header */}
+      <header className="mb-10">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              Dashboard
+            </h1>
+            <p className="mt-1 text-sm text-slate-500">
+              {format(new Date(), "EEEE, MMMM d, yyyy")} · Synced{" "}
+              {format(lastUpdated, "HH:mm:ss")}
+            </p>
           </div>
-
-          <div className="flex items-center gap-4">
-            <Tabs value={range} onValueChange={setRange} className="bg-white border border-slate-200 p-1 rounded-sm shadow-sm">
-              <TabsList className="bg-transparent h-8 gap-1">
-                {['today', 'week', 'month', 'year'].map((t) => (
+          <div className="flex items-center gap-3">
+            <Tabs value={range} onValueChange={setRange} className="w-auto">
+              <TabsList className="inline-flex h-10 rounded-xl border border-slate-200 bg-white p-1.5 shadow-sm gap-0.5 text-slate-900 transition-colors duration-200">
+                {["today", "week", "month", "year"].map((t) => (
                   <TabsTrigger
                     key={t}
                     value={t}
-                    className="text-[10px] font-black uppercase tracking-widest h-6 data-[state=active]:bg-slate-900 data-[state=active]:text-white rounded-none border-none shadow-none px-4"
-                  >
-                    {t}
+                    className="
+                    rounded-lg px-4 py-2 text-sm font-medium
+                    transition-all duration-200 ease-out
+                    bg-white text-slate-700
+                    data-[state=active]:bg-[#2b7fff]
+                    data-[state=active]:text-white
+                    data-[state=active]:shadow-sm
+                    hover:bg-slate-100
+                  "
+                >
+                    {t.charAt(0).toUpperCase() + t.slice(1)}
                   </TabsTrigger>
                 ))}
               </TabsList>
             </Tabs>
             <Button
               onClick={() => fetchDashboardData(range)}
-              className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 rounded-sm h-10 px-6 font-black text-xs uppercase tracking-widest transition-all shadow-sm"
+              variant="outline"
+              size="sm"
+              className="rounded-xl border-slate-200 bg-white shadow-sm hover:bg-slate-50 h-10 px-4"
             >
-              <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-              RE-SYNC
+              <RefreshCw
+                className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`}
+              />
+              Sync
             </Button>
           </div>
         </div>
       </header>
 
-      <div className="grid gap-6">
-        {/* TOP STATS */}
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {mainStats.map((stat) => (
-            <div key={stat.label} className="bg-white border border-slate-200 p-6 shadow-sm relative overflow-hidden group">
-              <div className="relative z-10 flex flex-col gap-4">
-                <div className="flex items-center justify-between">
-                  <div className={`${stat.color} p-2 rounded-sm shadow-md`}>
-                    {stat.icon}
+      {/* Stats cards */}
+      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4 mb-10">
+        {mainStats.map((stat) => {
+          const Icon = stat.icon;
+          return (
+            <div
+              key={stat.label}
+              className={`rounded-2xl overflow-hidden transition-all duration-200 hover:shadow-lg ${
+                stat.highlight
+                  ? "dashboard-card-gradient shadow-lg text-white"
+                  : "border border-slate-200/80 bg-white shadow-sm hover:shadow-md hover:border-slate-200"
+              }`}
+            >
+              <div className="p-6">
+                <div className="flex items-start justify-between">
+                  <div
+                    className={`rounded-xl p-2.5 ${
+                      stat.highlight ? "bg-white/20" : "bg-brand-50"
+                    }`}
+                  >
+                    <Icon
+                      className={`h-5 w-5 ${
+                        stat.highlight ? "text-white" : "text-brand"
+                      }`}
+                    />
                   </div>
-                  <span className="text-[8px] font-black text-slate-400 border border-slate-100 px-1.5 py-0.5 uppercase tracking-widest bg-slate-50">
-                    {stat.delta}
+                  {stat.delta && (
+                    <Badge
+                      variant="secondary"
+                      className={
+                        stat.deltaPositive === true
+                          ? "bg-emerald-50 text-emerald-700 border-0 text-xs font-medium"
+                          : stat.deltaPositive === false
+                            ? "bg-red-50 text-red-600 border-0 text-xs font-medium"
+                            : stat.highlight
+                              ? "bg-white/25 text-white border-0 text-xs font-medium"
+                              : "bg-slate-100 text-slate-600 border-0 text-xs font-medium"
+                      }
+                    >
+                      {stat.delta}
+                    </Badge>
+                  )}
+                </div>
+                <p
+                  className={`mt-5 text-3xl font-bold tracking-tight ${
+                    stat.highlight ? "text-white" : "text-slate-900"
+                  }`}
+                >
+                  {stat.value}
+                </p>
+                <p
+                  className={`mt-1 text-sm font-semibold ${
+                    stat.highlight ? "text-white/95" : "text-slate-600"
+                  }`}
+                >
+                  {stat.label}
+                </p>
+                <p
+                  className={`text-xs mt-0.5 ${
+                    stat.highlight ? "text-white/75" : "text-slate-400"
+                  }`}
+                >
+                  {stat.sub}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ServiceNow, Jira, Pipeline */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-10">
+        {/* ServiceNow */}
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-1 rounded-full bg-brand" />
+              <h2 className="text-sm font-semibold text-slate-900">
+                ServiceNow
+              </h2>
+            </div>
+            <Badge className="bg-emerald-50 text-emerald-700 border-0 text-xs font-medium">
+              Synced
+            </Badge>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              {
+                label: "Total",
+                value: stats?.servicenow?.total ?? 0,
+                valueClass: "text-slate-900",
+              },
+              {
+                label: "Resolved",
+                value: stats?.servicenow?.resolved ?? 0,
+                valueClass: "text-emerald-600",
+              },
+              {
+                label: "In progress",
+                value: stats?.servicenow?.inProgress ?? 0,
+                valueClass: "text-brand",
+              },
+              {
+                label: "Closed",
+                value: stats?.servicenow?.closed ?? 0,
+                valueClass: "text-slate-500",
+              },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="rounded-lg bg-slate-50/80 p-3 border border-slate-100"
+              >
+                <p className="text-xs font-medium text-slate-500">{item.label}</p>
+                <p
+                  className={`text-lg font-semibold tracking-tight ${item.valueClass}`}
+                >
+                  {item.value}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Jira */}
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-1 rounded-full bg-brand-400" />
+              <h2 className="text-sm font-semibold text-slate-900">
+                Jira Cloud
+              </h2>
+            </div>
+            <Badge className="bg-brand-50 text-brand border-0 text-xs font-medium">
+              Active
+            </Badge>
+          </div>
+          <div className="space-y-3">
+            {[
+              {
+                label: "To do",
+                value: stats?.jira?.todo ?? 0,
+                bar: "bg-slate-200",
+              },
+              {
+                label: "In progress",
+                value: stats?.jira?.inProgress ?? 0,
+                bar: "bg-brand-200",
+              },
+              {
+                label: "Done",
+                value: stats?.jira?.done ?? 0,
+                bar: "bg-emerald-200",
+              },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="flex items-center justify-between rounded-lg bg-slate-50/80 px-3 py-2.5 border border-slate-100"
+              >
+                <div>
+                  <p className="text-xs font-medium text-slate-500">
+                    {item.label}
+                  </p>
+                  <p className="text-base font-semibold text-slate-900">
+                    {item.value}
+                  </p>
+                </div>
+                <div className={`h-1.5 w-12 rounded-full ${item.bar}`} />
+              </div>
+            ))}
+            <div className="rounded-lg bg-brand-50/80 border border-brand-100 px-3 py-2.5 flex items-center justify-between mt-2">
+              <div>
+                <p className="text-xs font-medium text-brand">Platform total</p>
+                <p className="text-base font-semibold text-slate-900">
+                  {stats?.jira?.total ?? 0}
+                </p>
+              </div>
+              <Briefcase className="h-4 w-4 text-brand/50" />
+            </div>
+          </div>
+        </div>
+
+        {/* Live pipeline */}
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-amber-400">
+          <h2 className="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <Activity className="h-4 w-4 text-amber-500" />
+            Live logic flow
+          </h2>
+          <div className="space-y-2.5">
+            {workflowSteps.map((step: any, index: number) => (
+              <div
+                key={index}
+                className="flex items-center gap-3 rounded-lg bg-slate-50/80 px-3 py-2.5 border border-slate-100"
+              >
+                <div
+                  className={`h-2 w-2 shrink-0 rounded-full ${
+                    step.status === "completed"
+                      ? "bg-emerald-500"
+                      : step.status === "active"
+                        ? "bg-brand animate-pulse"
+                        : "bg-slate-300"
+                  }`}
+                />
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-slate-800 truncate">
+                    {step.name}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    {step.status === "completed" ? "Done" : "Ready"}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Telemetry + Integrations */}
+      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+          <h2 className="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <BarChart3 className="h-4 w-4 text-slate-500" />
+            Activity
+          </h2>
+          <div className="space-y-1">
+            {recentActivity?.length ? (
+              recentActivity.map((log: any, idx: number) => (
+                <div
+                  key={idx}
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-slate-50/80 transition-colors"
+                >
+                  <span className="font-mono text-xs text-slate-400 shrink-0">
+                    {format(new Date(log.createdAt), "HH:mm:ss")}
+                  </span>
+                  <span className="text-slate-600 truncate">{log.description}</span>
+                  <Badge className="ml-auto bg-slate-100 text-slate-500 border-0 text-xs font-normal">
+                    Info
+                  </Badge>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-slate-500 py-4">No recent activity.</p>
+            )}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+          <h2 className="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <PlugZap className="h-4 w-4 text-emerald-500" />
+            Integrations
+          </h2>
+          <div className="space-y-3">
+            {integrations?.map((int: any) => (
+              <div
+                key={int.integrationType}
+                className="flex items-center justify-between rounded-lg px-3 py-2.5 bg-slate-50/80 border border-slate-100"
+              >
+                <div>
+                  <p className="text-sm font-medium text-slate-800 capitalize">
+                    {int.integrationType}
+                  </p>
+                  <p className="text-xs text-slate-500">Connected</p>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div
+                    className={`h-2 w-2 rounded-full ${
+                      int.status === "connected"
+                        ? "bg-emerald-500"
+                        : "bg-slate-300"
+                    }`}
+                  />
+                  <span className="text-xs font-medium text-slate-600">
+                    {int.status === "connected" ? "Active" : "Offline"}
                   </span>
                 </div>
-                <div>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{stat.label}</p>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-black tracking-tighter">{stat.value}</span>
-                    <span className="text-[8px] font-bold text-slate-500 uppercase">{stat.sub}</span>
-                  </div>
-                </div>
               </div>
-              <div className="absolute bottom-0 left-0 w-full h-[2px] bg-slate-50 group-hover:bg-[#0065ff]/10 transition-colors" />
-            </div>
-          ))}
-        </div>
-
-        {/* MIDDLE SECTION - PLATFORM SPECIFICS */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* SERVICENOW PANEL */}
-          <div className="bg-white border border-slate-200 p-6 shadow-sm rounded-none flex flex-col">
-            <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-6 bg-[#0065ff]" />
-                <h2 className="text-xs font-black uppercase tracking-[0.2em]">ServiceNow</h2>
-              </div>
-              <Badge className="bg-slate-900 text-white text-[8px] rounded-none px-2">INSTANCE_SYNCED</Badge>
-            </div>
-            <div className="grid grid-cols-2 gap-4 flex-1">
-              <div className="p-4 bg-slate-50 border border-slate-100">
-                <p className="text-[9px] font-black text-slate-400 uppercase mb-2">Total</p>
-                <p className="text-2xl font-black tracking-tighter">{stats?.servicenow?.total || 0}</p>
-              </div>
-              <div className="p-4 bg-slate-50 border border-slate-100">
-                <p className="text-[9px] font-black text-slate-400 uppercase mb-2">Resolved</p>
-                <p className="text-2xl font-black tracking-tighter text-emerald-600">{stats?.servicenow?.resolved || 0}</p>
-              </div>
-              <div className="p-4 bg-slate-50 border border-slate-100">
-                <p className="text-[9px] font-black text-slate-400 uppercase mb-2">Progressed</p>
-                <p className="text-2xl font-black tracking-tighter text-[#0065ff]">{stats?.servicenow?.inProgress || 0}</p>
-              </div>
-              <div className="p-4 bg-slate-50 border border-slate-100">
-                <p className="text-[9px] font-black text-slate-400 uppercase mb-2">Closed</p>
-                <p className="text-2xl font-black tracking-tighter text-slate-500">{stats?.servicenow?.closed || 0}</p>
-              </div>
-            </div>
+            ))}
           </div>
-
-          {/* JIRA PANEL */}
-          <div className="bg-white border border-slate-200 p-6 shadow-sm rounded-none flex flex-col">
-            <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-6 bg-indigo-500" />
-                <h2 className="text-xs font-black uppercase tracking-[0.2em]">Jira Cloud</h2>
-              </div>
-              <Badge className="bg-slate-900 text-white text-[8px] rounded-none px-2">CLOUD_ACTIVE</Badge>
+          <div className="mt-4 rounded-lg bg-slate-50/80 border border-slate-100 p-3 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Shield className="h-4 w-4 text-brand" />
+              <span className="text-xs font-medium text-slate-600">
+                TLS 1.3
+              </span>
             </div>
-            <div className="grid gap-3 flex-1">
-              <div className="p-3 bg-slate-50 border border-slate-100 flex justify-between items-center transition-all hover:bg-slate-100/50">
-                <div>
-                  <p className="text-[8px] font-black text-slate-400 uppercase mb-0.5 tracking-wider">To Do</p>
-                  <p className="text-xl font-black tracking-tighter text-slate-600">{stats?.jira?.todo || 0}</p>
-                </div>
-                <div className="w-8 h-1 bg-slate-200" />
-              </div>
-              <div className="p-3 bg-slate-50 border border-slate-100 flex justify-between items-center transition-all hover:bg-slate-100/50">
-                <div>
-                  <p className="text-[8px] font-black text-slate-400 uppercase mb-0.5 tracking-wider">In Progress</p>
-                  <p className="text-xl font-black tracking-tighter text-indigo-600">{stats?.jira?.inProgress || 0}</p>
-                </div>
-                <div className="w-8 h-1 bg-indigo-200" />
-              </div>
-              <div className="p-3 bg-slate-50 border border-slate-100 flex justify-between items-center transition-all hover:bg-slate-100/50">
-                <div>
-                  <p className="text-[8px] font-black text-slate-400 uppercase mb-0.5 tracking-wider">Done</p>
-                  <p className="text-xl font-black tracking-tighter text-emerald-600">{stats?.jira?.done || 0}</p>
-                </div>
-                <div className="w-8 h-1 bg-emerald-200" />
-              </div>
-              <div className="mt-1 p-3 bg-[#0065ff]/5 border border-[#0065ff]/10 flex justify-between items-center">
-                <div>
-                  <p className="text-[8px] font-black text-[#0065ff] uppercase mb-0.5 tracking-wider">Platform Total</p>
-                  <p className="text-xl font-black tracking-tighter">{stats?.jira?.total || 0}</p>
-                </div>
-                <Briefcase className="h-4 w-4 text-[#0065ff]/30" />
-              </div>
-            </div>
+            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
           </div>
-
-          {/* PIPELINE PANEL */}
-          <div className="bg-white border border-slate-200 p-6 shadow-sm rounded-none border-l-4 border-l-amber-400">
-            <h2 className="text-xs font-black uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-              <Activity className="h-4 w-4 text-amber-500" />
-              Live Logic Flow
-            </h2>
-            <div className="space-y-3">
-              {workflowSteps.map((step: any, index: number) => (
-                <div key={index} className="flex items-start gap-4 p-3 bg-slate-50 border border-slate-100">
-                  <div className={`mt-1.5 h-1.5 w-1.5 rounded-full ${step.status === 'completed' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.3)]' : step.status === 'active' ? 'bg-[#0065ff] animate-pulse' : 'bg-slate-300'}`} />
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-tight">{step.name}</p>
-                    <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{step.status === 'completed' ? 'Success' : 'Ready'}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* BOTTOM SECTION - LOGS & INTEGRATIONS */}
-        <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-          <div className="bg-white border border-slate-200 p-6 shadow-sm">
-            <h2 className="text-xs font-black uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-              <Terminal className="h-4 w-4 text-slate-400" />
-              Operational Telemetry
-            </h2>
-            <div className="space-y-2 font-mono">
-              {recentActivity?.map((log: any, idx: number) => (
-                <div key={idx} className="text-[10px] py-2 border-b border-slate-50 flex gap-4 hover:bg-slate-50 px-2 transition-colors">
-                  <span className="text-slate-400 font-bold shrink-0">[{format(new Date(log.createdAt), 'HH:mm:ss')}]</span>
-                  <span className="text-slate-600 truncate">{log.description}</span>
-                  <span className="ml-auto text-[8px] font-black bg-slate-100 px-1 py-0.5 rounded-none text-slate-400">INFO</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-white border border-slate-200 p-6 shadow-sm divide-y divide-slate-100">
-            <h2 className="text-xs font-black uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-              <RefreshCw className="h-4 w-4 text-emerald-500" />
-              Adapters
-            </h2>
-            <div className="space-y-4 pt-4">
-              {integrations?.map((int: any) => (
-                <div key={int.integrationType} className="flex items-center justify-between pb-4">
-                  <div>
-                    <p className="text-[10px] font-black uppercase">{int.integrationType}</p>
-                    <p className="text-[8px] text-slate-400 font-bold tracking-widest">STABLE_CONNECTION</p>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <div className={`h-2 w-2 rounded-none ${int.status === 'connected' ? 'bg-emerald-500' : 'bg-slate-300'}`} />
-                    <span className="text-[9px] font-black uppercase text-slate-600">{int.status === 'connected' ? 'Active' : 'Offline'}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="pt-6">
-              <div className="flex bg-slate-50 p-4 border border-slate-100 items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Shield className="h-4 w-4 text-[#0065ff]" />
-                  <span className="text-[9px] font-black uppercase tracking-widest">TLS 1.3 Active</span>
-                </div>
-                <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              </div>
-              <Button variant="ghost" className="w-full mt-4 text-[9px] font-black text-slate-400 border border-slate-100 rounded-none h-8 tracking-[0.2em]">VIEW ALL CONFIGS</Button>
-            </div>
-          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full mt-3 text-slate-500 hover:text-slate-700"
+            asChild
+          >
+            <Link href="/dashboard/integrations">View all</Link>
+          </Button>
         </div>
       </div>
     </div>

@@ -3,13 +3,24 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { CheckCircle2, AlertCircle, Clock, Mail, FileText, Activity, User, Ticket as TicketIcon, Link as LinkIcon, ExternalLink } from 'lucide-react'
+import { Mail, User, Ticket as TicketIcon, Link as LinkIcon, ExternalLink } from 'lucide-react'
 import { format } from 'date-fns'
 import Link from 'next/link'
+
+/** Jira returns description as ADF (Atlassian Document Format) { type, version, content }. Extract plain text. */
+function descriptionToText(value: unknown): string {
+    if (value == null) return ''
+    if (typeof value === 'string') return value
+    if (typeof value !== 'object') return String(value)
+    const obj = value as { type?: string; content?: unknown[]; text?: string }
+    if (Array.isArray(obj.content)) {
+        return obj.content.map((node: unknown) => descriptionToText(node)).join('')
+    }
+    if (typeof obj.text === 'string') return obj.text
+    return ''
+}
 
 export default function TicketDetailPage() {
     const params = useParams()
@@ -77,7 +88,7 @@ export default function TicketDetailPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="text-sm text-slate-700 whitespace-pre-wrap">
-                                {ticket.description || "No description provided."}
+                                {descriptionToText(ticket.description) || "No description provided."}
                             </div>
                         </CardContent>
                     </Card>
@@ -95,10 +106,10 @@ export default function TicketDetailPage() {
                             <CardContent>
                                 <div className="bg-muted p-4 rounded-md text-sm font-mono whitespace-pre-wrap">
                                     <div className="mb-4 border-b pb-2 text-muted-foreground flex justify-between">
-                                        <span>From: {emailData.from}</span>
+                                        <span>From: {typeof emailData.from === 'string' ? emailData.from : 'Unknown'}</span>
                                         <span>{emailData.date ? format(new Date(emailData.date), 'PPpp') : '-'}</span>
                                     </div>
-                                    {emailData.body}
+                                    {typeof emailData.body === 'string' ? emailData.body : descriptionToText(emailData.body)}
                                 </div>
                             </CardContent>
                         </Card>
