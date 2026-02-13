@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Collections } from "@/lib/db/collections";
+import type { Workflow } from "@/lib/db/models";
 import { getCurrentUser } from "@/lib/auth";
 import { ObjectId } from "mongodb";
 import { servicenowClient } from "@/lib/integrations/servicenow";
 import { jiraClient } from "@/lib/integrations/jira";
+
+function toWorkflowStatus(raw: string | null | undefined): Workflow["status"] {
+    if (raw == null || raw === "") return "processing";
+    const s = String(raw).toLowerCase();
+    if (["6", "7", "resolved", "closed", "done", "completed", "solved"].includes(s)) return "completed";
+    if (["failed", "cancelled", "canceled"].includes(s)) return "failed";
+    return "processing";
+}
 
 /**
  * GET /api/workflows/[id] - Get a single workflow by ID with live external data
@@ -139,8 +148,26 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             }
         }
 
+        // Persist live status to DB so list and other views show correct state
+        const liveRaw = (liveServiceNow as any)?.state ?? (liveJira as any)?.status ?? null;
+        const newStatus = toWorkflowStatus(liveRaw);
+        if (workflow._id && workflow.status !== newStatus) {
+            try {
+                const update: any = { status: newStatus };
+                if (newStatus === "completed") update.completedAt = new Date();
+                await workflows.updateOne(
+                    { _id: workflow._id },
+                    { $set: update }
+                );
+            } catch (e) {
+                console.warn("Failed to persist workflow status:", e);
+            }
+        }
+        const workflowStatus = (workflow._id && workflow.status !== newStatus) ? newStatus : workflow.status;
+
         return NextResponse.json({
             ...workflow,
+            status: workflowStatus,
             liveServiceNow,
             liveJira
         });

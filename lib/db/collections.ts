@@ -7,6 +7,7 @@ import type {
   Workflow,
   Ticket,
   ActivityLog,
+  DashboardStats,
 } from "./models";
 
 /**
@@ -50,5 +51,10 @@ export class Collections {
   static async activityLogs(): Promise<Collection<ActivityLog>> {
     const db = await this.getDb();
     return db.collection<ActivityLog>("activity_logs");
+  }
+
+  static async dashboardStats(): Promise<Collection<DashboardStats>> {
+    const db = await this.getDb();
+    return db.collection<DashboardStats>("dashboard_stats");
   }
 }

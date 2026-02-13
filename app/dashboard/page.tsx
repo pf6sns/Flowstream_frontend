@@ -27,14 +27,18 @@ export default function DashboardPage() {
   const [range, setRange] = useState("today");
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
-  const fetchDashboardData = useCallback(async (currentRange: string) => {
+  const fetchDashboardData = useCallback(async (currentRange: string, isRefresh = false) => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/dashboard/stats?range=${currentRange}`);
+      const res = await fetch(`/api/dashboard/stats?range=${currentRange}${isRefresh ? '&refresh=true' : ''}`);
       if (res.ok) {
         const result = await res.json();
         setData(result);
-        setLastUpdated(new Date());
+        if (result.lastUpdated) {
+          setLastUpdated(new Date(result.lastUpdated));
+        } else {
+          setLastUpdated(new Date());
+        }
       }
     } catch (error) {
       console.error("Failed to fetch dashboard data", error);
@@ -44,8 +48,8 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    fetchDashboardData(range);
-    const interval = setInterval(() => fetchDashboardData(range), 30000);
+    fetchDashboardData(range, false); // Initial fetch (from DB)
+    const interval = setInterval(() => fetchDashboardData(range, false), 30000); // Polling (from DB)
     return () => clearInterval(interval);
   }, [fetchDashboardData, range]);
 
@@ -138,14 +142,14 @@ export default function DashboardPage() {
                     data-[state=active]:shadow-sm
                     hover:bg-slate-100
                   "
-                >
+                  >
                     {t.charAt(0).toUpperCase() + t.slice(1)}
                   </TabsTrigger>
                 ))}
               </TabsList>
             </Tabs>
             <Button
-              onClick={() => fetchDashboardData(range)}
+              onClick={() => fetchDashboardData(range, true)}
               variant="outline"
               size="sm"
               className="rounded-xl border-slate-200 bg-white shadow-sm hover:bg-slate-50 h-10 px-4"
@@ -166,23 +170,20 @@ export default function DashboardPage() {
           return (
             <div
               key={stat.label}
-              className={`rounded-2xl overflow-hidden transition-all duration-200 hover:shadow-lg ${
-                stat.highlight
-                  ? "dashboard-card-gradient shadow-lg text-white"
-                  : "border border-slate-200/80 bg-white shadow-sm hover:shadow-md hover:border-slate-200"
-              }`}
+              className={`rounded-2xl overflow-hidden transition-all duration-200 hover:shadow-lg ${stat.highlight
+                ? "dashboard-card-gradient shadow-lg text-white"
+                : "border border-slate-200/80 bg-white shadow-sm hover:shadow-md hover:border-slate-200"
+                }`}
             >
               <div className="p-6">
                 <div className="flex items-start justify-between">
                   <div
-                    className={`rounded-xl p-2.5 ${
-                      stat.highlight ? "bg-white/20" : "bg-brand-50"
-                    }`}
+                    className={`rounded-xl p-2.5 ${stat.highlight ? "bg-white/20" : "bg-brand-50"
+                      }`}
                   >
                     <Icon
-                      className={`h-5 w-5 ${
-                        stat.highlight ? "text-white" : "text-brand"
-                      }`}
+                      className={`h-5 w-5 ${stat.highlight ? "text-white" : "text-brand"
+                        }`}
                     />
                   </div>
                   {stat.delta && (
@@ -203,23 +204,20 @@ export default function DashboardPage() {
                   )}
                 </div>
                 <p
-                  className={`mt-5 text-3xl font-bold tracking-tight ${
-                    stat.highlight ? "text-white" : "text-slate-900"
-                  }`}
+                  className={`mt-5 text-3xl font-bold tracking-tight ${stat.highlight ? "text-white" : "text-slate-900"
+                    }`}
                 >
                   {stat.value}
                 </p>
                 <p
-                  className={`mt-1 text-sm font-semibold ${
-                    stat.highlight ? "text-white/95" : "text-slate-600"
-                  }`}
+                  className={`mt-1 text-sm font-semibold ${stat.highlight ? "text-white/95" : "text-slate-600"
+                    }`}
                 >
                   {stat.label}
                 </p>
                 <p
-                  className={`text-xs mt-0.5 ${
-                    stat.highlight ? "text-white/75" : "text-slate-400"
-                  }`}
+                  className={`text-xs mt-0.5 ${stat.highlight ? "text-white/75" : "text-slate-400"
+                    }`}
                 >
                   {stat.sub}
                 </p>
@@ -353,13 +351,12 @@ export default function DashboardPage() {
                 className="flex items-center gap-3 rounded-lg bg-slate-50/80 px-3 py-2.5 border border-slate-100"
               >
                 <div
-                  className={`h-2 w-2 shrink-0 rounded-full ${
-                    step.status === "completed"
-                      ? "bg-emerald-500"
-                      : step.status === "active"
-                        ? "bg-brand animate-pulse"
-                        : "bg-slate-300"
-                  }`}
+                  className={`h-2 w-2 shrink-0 rounded-full ${step.status === "completed"
+                    ? "bg-emerald-500"
+                    : step.status === "active"
+                      ? "bg-brand animate-pulse"
+                      : "bg-slate-300"
+                    }`}
                 />
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-slate-800 truncate">
@@ -423,11 +420,10 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div
-                    className={`h-2 w-2 rounded-full ${
-                      int.status === "connected"
-                        ? "bg-emerald-500"
-                        : "bg-slate-300"
-                    }`}
+                    className={`h-2 w-2 rounded-full ${int.status === "connected"
+                      ? "bg-emerald-500"
+                      : "bg-slate-300"
+                      }`}
                   />
                   <span className="text-xs font-medium text-slate-600">
                     {int.status === "connected" ? "Active" : "Offline"}

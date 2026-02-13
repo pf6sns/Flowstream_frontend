@@ -5,10 +5,31 @@ import { getCurrentUser } from "@/lib/auth";
 import { servicenowClient } from "@/lib/integrations/servicenow";
 import { jiraClient } from "@/lib/integrations/jira";
 
+const EXTERNAL_API_TIMEOUT_MS = 12_000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error("timeout")), ms)
+    ),
+  ]);
+}
+
+/** Map ServiceNow/Jira status strings to stored Workflow.status */
+function toWorkflowStatus(raw: string | null | undefined): Workflow["status"] {
+  if (raw == null || raw === "") return "processing";
+  const s = String(raw).toLowerCase();
+  if (["6", "7", "resolved", "closed", "done", "completed", "solved"].includes(s)) return "completed";
+  if (["failed", "cancelled", "canceled"].includes(s)) return "failed";
+  return "processing";
+}
 
 /**
  * GET /api/workflows - Get workflows for current company with Real-time status sync
  */
+export const maxDuration = 30;
+
 export async function GET(request: NextRequest) {
   try {
     const user = await getCurrentUser(request);
@@ -42,14 +63,15 @@ export async function GET(request: NextRequest) {
 
     let totalNew = 0;
 
-    // --- SYNC-ON-READ: Ensure Mongo DB has latest tickets for this view ---
+    // --- SYNC-ON-READ: Ensure Mongo DB has latest tickets (with timeout to avoid 504) ---
     try {
-      console.log("Checking backend for new tickets...");
-      // Fetch corresponding page of tickets from Python Backend (SQLite)
-      const fetchLimit = limit; // Fetch potentially new tickets
-      const externalTickets = await servicenowClient.fetchTickets(fetchLimit, skip);
+      const fetchLimit = Math.min(limit, 50);
+      const externalTickets = await withTimeout(
+        servicenowClient.fetchTickets(fetchLimit, skip),
+        EXTERNAL_API_TIMEOUT_MS
+      ).catch(() => null);
 
-      if (externalTickets && externalTickets.length > 0) {
+      if (Array.isArray(externalTickets) && externalTickets.length > 0) {
         const newWorkflowsToInsert: any[] = [];
 
         for (const ticket of externalTickets) {
@@ -62,19 +84,17 @@ export async function GET(request: NextRequest) {
           });
 
           if (!exists) {
-            // Map to Workflow schema
-            // Determine initial status based on ticket state
-            const isClosed = ['6', '7', 'Resolved', 'Closed', 'Done'].includes(ticket.state);
-            const statusVal = isClosed ? 'completed' : 'processing';
-
+            const statusVal = toWorkflowStatus(ticket.state);
+            const now = new Date();
             newWorkflowsToInsert.push({
               companyId: user.companyId,
-              emailId: `sync-${ticket.sys_id}`, // Unique ID for mongo
+              emailId: `sync-${ticket.sys_id}`,
               emailSubject: ticket.short_description || 'No Description',
               emailFrom: ticket.caller_id || 'System',
               status: statusVal,
-              startedAt: ticket.sys_created_on ? new Date(ticket.sys_created_on) : new Date(),
-              createdAt: new Date(), // When synced to our DB
+              startedAt: ticket.sys_created_on ? new Date(ticket.sys_created_on) : now,
+              createdAt: now,
+              completedAt: statusVal === 'completed' ? now : undefined,
               servicenowTicketId: ticket.number,
               jiraTicketId: ticket.jira_ticket_id || null,
               workflowData: {
@@ -83,9 +103,16 @@ export async function GET(request: NextRequest) {
               }
             });
           } else {
-            // OPTIONAL: Update status if changed? 
-            // For now, we rely on the live-merge logic below for status *display* to avoid heavy writes on every read.
-            // But if we want *persistence* of status, we could update here.
+            // Persist current status from ServiceNow into DB
+            const newStatus = toWorkflowStatus(ticket.state);
+            if (exists.status !== newStatus) {
+              const update: any = { status: newStatus };
+              if (newStatus === 'completed') update.completedAt = new Date();
+              await workflowsCollection.updateOne(
+                { _id: exists._id },
+                { $set: update }
+              );
+            }
           }
         }
 
@@ -120,30 +147,41 @@ export async function GET(request: NextRequest) {
       let liveJiraMap: Record<string, string> = {};
 
       try {
-        // Fetch live status for the *displayed* tickets only, ideally.
-        // But fetchTickets returns a page.
-        // Since we know the numbers, we could query specific IDs, but existing logic fetches paginated.
-        // Let's stick to existing logic for simplicity.
         const [snTickets, jiraIssues] = await Promise.all([
-          servicenowClient.fetchTickets(limit, skip),
-          jiraClient.fetchIssues(limit, skip) // Assuming correlation
+          withTimeout(servicenowClient.fetchTickets(limit, skip), EXTERNAL_API_TIMEOUT_MS).catch(() => []),
+          withTimeout(jiraClient.fetchIssues(limit, skip), EXTERNAL_API_TIMEOUT_MS).catch(() => []),
         ]);
 
-        snTickets.forEach((t: any) => liveSnMap[t.number] = t.state);
-        jiraIssues.forEach((i: any) => liveJiraMap[i.key] = i.fields.status.name);
+        (snTickets || []).forEach((t: any) => { if (t?.number) liveSnMap[t.number] = t.state; });
+        (jiraIssues || []).forEach((i: any) => { if (i?.key && i?.fields?.status?.name) liveJiraMap[i.key] = i.fields.status.name; });
       } catch (e) {
         console.error("Real-time status fetch failed for workflow list:", e);
       }
 
-      // Merge live status into workflows (cast so merged value satisfies Workflow.status)
+      // Merge live status and persist changes to DB so frontend always reads correct state
+      const bulkUpdates: { updateOne: { filter: { _id: any }; update: { $set: any } } }[] = [];
       companyWorkflows = companyWorkflows.map(w => {
         const liveSnStatus = w.servicenowTicketId ? liveSnMap[w.servicenowTicketId] : null;
         const liveJiraStatus = w.jiraTicketId ? liveJiraMap[w.jiraTicketId] : null;
-        return {
-          ...w,
-          status: (liveSnStatus || liveJiraStatus || w.status) as Workflow["status"]
-        };
+        const mergedRaw = liveSnStatus || liveJiraStatus || w.status;
+        const newStatus = toWorkflowStatus(mergedRaw);
+        if (w._id && w.status !== newStatus) {
+          const update: any = { status: newStatus };
+          if (newStatus === 'completed') update.completedAt = new Date();
+          bulkUpdates.push({
+            updateOne: { filter: { _id: w._id }, update: { $set: update } }
+          });
+        }
+        return { ...w, status: newStatus };
       });
+
+      if (bulkUpdates.length > 0) {
+        try {
+          await workflowsCollection.bulkWrite(bulkUpdates);
+        } catch (e) {
+          console.warn("Failed to persist workflow status updates:", e);
+        }
+      }
     }
 
     return NextResponse.json({

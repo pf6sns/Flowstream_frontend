@@ -89,3 +89,30 @@ export interface ActivityLog {
   metadata?: Record<string, unknown>;
   createdAt: Date;
 }
+export interface DashboardStats {
+  _id?: ObjectId | string;
+  companyId: string | ObjectId;
+  range: string;
+  stats: {
+    total: number;
+    globalInProgress: number;
+    globalResolved: number;
+    globalClosed: number;
+    servicenow: {
+      total: number;
+      inProgress: number;
+      resolved: number;
+      closed: number;
+      completed: number;
+    };
+    jira: {
+      total: number;
+      todo: number;
+      inProgress: number;
+      done: number;
+    };
+    activeWorkflows: number;
+    emailsProcessed: number;
+  };
+  lastUpdated: Date;
+}
