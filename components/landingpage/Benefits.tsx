@@ -4,11 +4,11 @@ import { useEffect, useRef } from "react";
 import { Timer, TrendingDown, ShieldCheck, Zap, Bell, FileText } from "lucide-react";
 
 const benefits = [
-  { label: "Reduced manual coordination between ITSM and DevOps", icon: TrendingDown },
-  { label: "Faster execution across service and delivery teams", icon: Zap },
-  { label: "Improved SLA compliance and transparency", icon: ShieldCheck },
-  { label: "Strategic alignment between operations and product teams", icon: FileText },
-  { label: "Data-driven decision making for CIOs and leadership", icon: TrendingDown }, // Using TrendingDown as a placeholder or reuse another relevant icon
+  { label: "Reduced Manual Workload", icon: TrendingDown },
+  { label: "Accelerated Resolution", icon: Zap },
+  { label: "Unified Visibility", icon: ShieldCheck },
+  { label: "Consistent Compliance", icon: FileText },
+  { label: "Enhanced User Experience", icon: Bell },
 ];
 
 const Benefits = () => {
@@ -34,7 +34,7 @@ const Benefits = () => {
             </div>
           </div>
           <h2 className="mt-4 font-display text-3xl font-bold text-[#111111] md:text-5xl">
-            Operational Excellence at Scale
+            Measurable Operational Value
           </h2>
         </motion.div>
 

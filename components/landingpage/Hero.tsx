@@ -32,14 +32,13 @@ export function Hero() {
           </div>
 
           <h1 className="mx-auto max-w-4xl font-semibold tracking-tight text-black text-4xl leading-tight sm:text-5xl md:text-6xl md:leading-[1.05]">
-            Jira + ServiceNow. <br className="hidden md:block" />
-            <span className="text-brand">One Intelligent Execution Layer.</span>
+            Unified Incident Management. <br className="hidden md:block" />
+            <span className="text-brand">Intelligent Execution.</span>
           </h1>
 
           {/* Subheading copy – use darker gray for better contrast on the blue background */}
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-slate-700 md:text-lg">
-            Unify project delivery and IT service management into a single AI-orchestrated ecosystem.
-            Eliminate manual coordination, reduce delays, and gain real-time operational visibility across your enterprise.
+            Connect email, ServiceNow, and Jira into one automated workflow. FlowStream classifies, routes, and resolves incidents with Agentic AI, eliminating manual triage and accelerating resolution.
           </p>
         </motion.div>
 
@@ -72,7 +71,7 @@ export function Hero() {
           transition={{ delay: 0.6 }}
           className="mt-6 text-xs font-medium text-slate-500 max-w-lg mx-auto italic"
         >
-          &quot;Not another integration. An intelligent automation layer that seamlessly connects enterprise service management with automated issue routing, execution, and resolution.&quot;
+          &quot;A dedicated AI layer that orchestrates the entire incident lifecycle—from email ingestion to final resolution.&quot;
         </motion.p>
       </div>
     </section>

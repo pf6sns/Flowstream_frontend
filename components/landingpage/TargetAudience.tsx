@@ -6,23 +6,23 @@ import { Users, Briefcase, Terminal, BarChart3 } from "lucide-react";
 const audience = [
     {
         icon: Briefcase,
-        title: "Enterprise IT Organizations",
-        desc: "Improve SLA compliance and eliminate operational friction.",
+        title: "IT Operations Teams",
+        desc: "Streamline service desk efficiency.",
     },
     {
         icon: Users,
-        title: "Project & Delivery Teams",
-        desc: "Remove repetitive coordination and manual status updates.",
+        title: "Product & Engineering",
+        desc: "Receive clear, prioritized technical tasks.",
     },
     {
         icon: Terminal,
-        title: "DevOps & Engineering Leaders",
-        desc: "Align development priorities with real-time service demand.",
+        title: "Service Delivery Leaders",
+        desc: "Monitor comprehensive performance metrics.",
     },
     {
         icon: BarChart3,
-        title: "CIOs & Transformation Leaders",
-        desc: "Gain unified oversight across service and delivery ecosystems.",
+        title: "Technology Leaders",
+        desc: "Ensure strategic alignment and tool consolidation.",
     },
 ];
 
@@ -44,10 +44,13 @@ export function TargetAudience() {
                                 className="pointer-events-none absolute inset-0 rounded-full border border-[#bcd6ff] bg-[#e6f0ff]"
                             />
                             <span className="relative text-xs font-bold uppercase tracking-[0.2em] text-[#0065ff]">
-                                WHO THIS IS BUILT FOR
+                                WHO IT IS FOR
                             </span>
                         </div>
                     </div>
+                    <h2 className="mt-4 font-display text-3xl font-bold text-[#111111] md:text-5xl">
+                        Built for Enterprise Operations
+                    </h2>
                 </motion.div>
 
                 <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">

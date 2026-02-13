@@ -1,15 +1,20 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail, Brain, Ticket, Code2, Rocket, CheckCircle, Send } from "lucide-react";
+import { Mail, Brain, FileText, Wrench, GitBranch, FlaskConical, Rocket, CheckSquare, CheckCircle, Send } from "lucide-react";
 
 const steps = [
-  { icon: Mail, label: "Identify (ServiceNow)", desc: "Incidents, requests, and changes are intelligently categorized and enriched using AI." },
-  { icon: Brain, label: "Convert (AI Engine)", desc: "Relevant service items automatically generate structured Jira tasks with contextual intelligence." },
-  { icon: Ticket, label: "Execute (Jira)", desc: "Development teams act with full visibility and prioritized workload distribution." },
-  { icon: Code2, label: "Resolve & Sync (Unified System)", desc: "Status updates reflect instantly across systems, ensuring SLA transparency and compliance." },
+  { icon: Mail, label: "Issue Raised", desc: "Issue is raised by a customer via Slack, Email, or Phone Call." },
+  { icon: FileText, label: "Auto-Ticket Creation", desc: "System instantly logs an incident in ServiceNow without manual intervention." },
+  { icon: Brain, label: "AI Analysis", desc: "Flowstream classifies intent, severity, and expertise requirements." },
+  { icon: Wrench, label: "Jira Ticket Creation", desc: "Technical issues are auto-created in Jira and assigned based on workload." },
+  { icon: GitBranch, label: "Dev & GitHub Push", desc: "Developers complete tasks and push code, maintaining Jira traceability." },
+  { icon: FlaskConical, label: "Automated Testing", desc: "CI/CD triggers test suites to validate functionality and regression safety." },
+  { icon: Rocket, label: "Automated Deployment", desc: "Successful code is automatically deployed to the appropriate environment." },
+  { icon: CheckSquare, label: "Jira Closure", desc: "Jira ticket is automatically updated and closed upon deployment." },
+  { icon: CheckCircle, label: "ServiceNow Closure", desc: "Incident is resolved and updated with resolution notes." },
+  { icon: Send, label: "Customer Closure", desc: "Closure email sent to customer with summary and deployment confirmation." },
 ];
-
 // Named export so app/page.tsx can import { Workflow } from "@/components/landingpage/Workflow";
 export function Workflow() {
   return (
@@ -67,7 +72,7 @@ export function Workflow() {
                     className={`hidden md:block mt-2 text-6xl opacity-20 transition-opacity duration-300 group-hover:opacity-60 font-bold text-[#0065ff]/70 ${i % 2 !== 0 ? "text-left" : "text-right"
                       }`}
                   >
-                    0{i + 1}
+                   {i+1>=10?i+1:`0${i + 1}`}
                   </span>
 
                   <div

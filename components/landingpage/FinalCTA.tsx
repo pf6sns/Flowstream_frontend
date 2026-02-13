@@ -18,13 +18,16 @@ export function FinalCTA() {
         >
           <h2 className="mx-auto max-w-3xl font-semibold text-2xl text-black sm:text-3xl md:text-4xl">
             Modernize. Automate. Optimize.
+           
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-slate-600 md:text-base">
-            From customer query to intelligent action — without operational chaos.
+           
           </p>
           <p className="mx-auto mt-4 max-w-xl text-sm font-medium text-slate-800 md:text-base">
             Intelligence should reduce friction. Automation should enhance execution.
+            From customer query to intelligent action — without operational chaos.
           </p>
+         
           <div className="mt-6 flex flex-col items-center justify-center gap-4 sm:mt-8 sm:flex-row">
             <Link
               href="/signup"

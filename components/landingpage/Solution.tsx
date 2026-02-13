@@ -6,33 +6,33 @@ import { Brain, GitPullRequest, Link2, Activity, Bell, CheckCircle2 } from "luci
 const solutions = [
   {
     icon: Brain,
-    title: "Context Awareness",
-    desc: "Understands service impact, dependencies, and urgency.",
+    title: "Intelligent Classification",
+    desc: "AI analyzes intent and categorizes incoming requests.",
   },
   {
     icon: GitPullRequest,
-    title: "Autonomous Routing",
-    desc: "Assigns tasks based on skill, availability, and priority.",
+    title: "Automated Ticket Creation",
+    desc: "Instantly generates ServiceNow incidents and Jira tickets.",
   },
   {
     icon: Link2,
-    title: "Adaptive Prioritization",
-    desc: "Dynamically re-ranks work as business impact shifts.",
+    title: "Smart Routing",
+    desc: "Directs tasks to the correct team based on expertise and availability.",
   },
   {
     icon: Activity,
-    title: "Predictive SLA Monitoring",
-    desc: "Forecasts risk before breaches occur.",
+    title: "Lifecycle Synchronization",
+    desc: "Updates status across all platforms in real-time.",
   },
   {
     icon: Bell,
-    title: "Continuous Learning Loop",
-    desc: "Improves routing and resolution based on historical outcomes.",
+    title: "Proactive Notifications",
+    desc: "Keeps users and stakeholders informed at every stage.",
   },
   {
     icon: CheckCircle2,
-    title: "Cross-Platform Visibility",
-    desc: "Unified dashboards for leadership oversight.",
+    title: "Automated Closure",
+    desc: "Validates resolution and closes tickets without manual intervention.",
   },
 ];
 
@@ -65,16 +65,11 @@ export function Solution() {
             One Ecosystem. Intelligent Workflows. Real Impact.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 md:text-base">
-            An AI-driven orchestration framework connecting Jira project workflows with ServiceNow ITSM and ITOM operations.
+            FlowStream serves as the intelligent bridge between your support channels and technical execution.
             <br className="mt-2 block" />
-            Flowstream creates a unified execution engine that:
+            Our platform orchestrates the complete incident lifecycle:
           </p>
-          <ul className="mx-auto mt-4 max-w-lg text-left text-sm leading-relaxed text-slate-600 md:text-base list-disc pl-5 space-y-1">
-            <li>Detects and categorizes incidents automatically</li>
-            <li>Routes work using AI-based prioritization</li>
-            <li>Synchronizes tasks across platforms in real time</li>
-            <li>Learns and optimizes continuously</li>
-          </ul>
+       
         </motion.div>
 
         <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">

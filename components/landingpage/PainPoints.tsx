@@ -6,28 +6,28 @@ import { Clock, RefreshCcw, Layers, AlertTriangle, AlertCircle } from "lucide-re
 const pains = [
   {
     icon: RefreshCcw,
-    title: "Manual ticket-to-task conversion",
-    desc: "ServiceNow incidents manually recreated in Jira, causing delays.",
+    title: "Manual Incident Routing",
+    desc: "Support teams spend hours manually categorizing and assigning tickets.",
   },
   {
     icon: Clock,
-    title: "No real-time synchronization",
-    desc: "Development and ITSM teams lack instant status alignment.",
+    title: "Disconnected Tools",
+    desc: "ServiceNow and Jira operate in silos, creating visibility gaps.",
   },
   {
     icon: Layers,
-    title: "Siloed prioritization",
-    desc: "Decisions made without full operational context.",
+    title: "Delayed Response Times",
+    desc: "Handover friction between systems slows down critical issue resolution.",
   },
   {
     icon: AlertTriangle,
-    title: "Triage bottlenecks",
-    desc: "Repetitive approvals and routing slow down execution.",
+    title: "Lack of Lifecycle Visibility",
+    desc: "Stakeholders cannot track the complete journey of an incident.",
   },
   {
     icon: AlertCircle,
-    title: "SLA risk exposure",
-    desc: "Inconsistent tracking increases compliance risks.",
+    title: "Inconsistent Communication",
+    desc: "Updates are lost between technical teams and end-users.",
   },
 ];
 
@@ -54,10 +54,10 @@ export function PainPoints() {
             </div>
           </div>
           <h2 className="mt-3 font-semibold text-2xl text-black sm:text-3xl md:text-4xl">
-            Disconnected Systems. Delayed Execution.
+            Operational Fragmentation. Reduced Efficiency.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 md:text-base">
-            Enterprise IT and project teams operate in parallel systems — creating friction, inefficiency, and visibility gaps.
+            Enterprise IT and project teams operate in parallel systems, creating friction and visibility gaps that impact service delivery.
           </p>
         </motion.div>
 
