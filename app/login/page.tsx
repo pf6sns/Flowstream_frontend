@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");

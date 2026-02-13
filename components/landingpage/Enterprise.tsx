@@ -6,33 +6,33 @@ import { Shield, Plug, Users, Scale, Zap, FileCheck } from "lucide-react";
 const features = [
   {
     icon: Shield,
-    title: "Secure integrations",
-    desc: "Enterprise-grade encryption and secure API connections across all platforms.",
+    title: "Secure Integrations",
+    desc: "Encrypted connections with ServiceNow and Jira.",
   },
   {
     icon: Plug,
-    title: "API-first architecture",
-    desc: "RESTful APIs enable seamless connectivity with your existing tech stack.",
+    title: "Scalable Architecture",
+    desc: "Adaptable to growing organizational volumes.",
   },
   {
     icon: Users,
-    title: "Role-based workflows",
-    desc: "Granular access controls aligned with your organizational structure.",
+    title: "Role-based Access",
+    desc: "Granular controls aligned with organizational structure.",
   },
   {
     icon: Scale,
-    title: "Scalable deployment",
-    desc: "Handles 10 or 10,000 daily incidents without performance degradation.",
+    title: "High Availability",
+    desc: "Designed for reliable, continuous operation.",
   },
   {
     icon: Zap,
-    title: "Production-ready",
-    desc: "Battle-tested automation that runs reliably in mission-critical environments.",
+    title: "Compliance Aligned",
+    desc: "Supports adherence to internal and external standards.",
   },
   {
     icon: FileCheck,
-    title: "Audit-ready logging",
-    desc: "Complete event logs for compliance, governance, and forensic analysis.",
+    title: "Complete Auditability",
+    desc: "Full traceability of every action and automated decision.",
   },
 ];
 
@@ -62,7 +62,7 @@ export function Enterprise() {
             </div>
           </div>
           <h2 className="mt-4 font-display text-3xl font-bold text-[#111111] md:text-5xl">
-            Built for Scale. Ready for Production.
+            Secure. Scalable. Compliant.
           </h2>
         </motion.div>
 

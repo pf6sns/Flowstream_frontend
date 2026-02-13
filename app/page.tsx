@@ -6,6 +6,7 @@ import Benefits from "@/components/landingpage/Benefits";
 import { Workflow } from "@/components/landingpage/Workflow";
 import { Enterprise } from "@/components/landingpage/Enterprise";
 import { FinalCTA } from "@/components/landingpage/FinalCTA";
+import { TargetAudience } from "@/components/landingpage/TargetAudience";
 import { Footer } from "@/components/landingpage/Footer";
 
 export default function Home() {
@@ -16,8 +17,9 @@ export default function Home() {
         <Hero />
         <PainPoints />
         <Solution />
-        <Benefits />
         <Workflow />
+        <Benefits />
+        <TargetAudience />
         <Enterprise />
         <FinalCTA />
       </main>

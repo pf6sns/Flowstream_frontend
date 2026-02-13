@@ -28,19 +28,17 @@ export function Hero() {
         >
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-xs font-medium text-slate-500">
             <span className="h-1.5 w-1.5 rounded-full bg-brand" />
-            Agentic AI for Enterprise Operations
+            ENTERPRISE AI ORCHESTRATION
           </div>
 
           <h1 className="mx-auto max-w-4xl font-semibold tracking-tight text-black text-4xl leading-tight sm:text-5xl md:text-6xl md:leading-[1.05]">
-            Manage Challenges{" "}
-            <span className="text-brand">Before They Escalate</span>
+            Unified Incident Management. <br className="hidden md:block" />
+            <span className="text-brand">Intelligent Execution.</span>
           </h1>
 
           {/* Subheading copy – use darker gray for better contrast on the blue background */}
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-slate-700 md:text-lg">
-            Flowstream connects your email, service desk, and engineering tools into one
-            intelligent automation layer — turning hours of manual triage into minutes of
-            AI-driven resolution.
+            Connect email, ServiceNow, and Jira into one automated workflow. FlowStream classifies, routes, and resolves incidents with Agentic AI, eliminating manual triage and accelerating resolution.
           </p>
         </motion.div>
 
@@ -53,7 +51,7 @@ export function Hero() {
           {/* Primary CTA – Let's Start */}
           <Link
             href="/signup"
-            className="inline-flex min-w-[200px] items-center justify-center rounded-lg bg-brand px-8 py-4 text-base font-bold text-white shadow-lg transition-all hover:scale-105 hover:bg-brand-600 active:scale-95"
+            className="inline-flex min-w-[50px] max-h-[50px] items-center justify-center rounded-lg bg-brand px-8 py-4 text-base font-bold text-white shadow-lg transition-all hover:scale-105 hover:bg-brand-600 active:scale-95"
           >
             Let's Start
           </Link>
@@ -61,7 +59,7 @@ export function Hero() {
           {/* Secondary CTA - Log In */}
           <Link
             href="/login"
-            className="inline-flex min-w-[200px] items-center justify-center rounded-lg border border-slate-200 bg-white px-8 py-4 text-base font-bold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:border-slate-300"
+            className="inline-flex min-w-[50px] max-h-[50px] items-center justify-center rounded-lg border border-slate-200 bg-white px-8 py-4 text-base font-bold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:border-slate-300"
           >
             Sign In
           </Link>
@@ -71,9 +69,9 @@ export function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="mt-6 text-xs font-medium text-slate-500"
+          className="mt-6 text-xs font-medium text-slate-500 max-w-lg mx-auto italic"
         >
-          Trusted by enterprise teams managing 10,000+ incidents monthly
+          &quot;A dedicated AI layer that orchestrates the entire incident lifecycle—from email ingestion to final resolution.&quot;
         </motion.p>
       </div>
     </section>

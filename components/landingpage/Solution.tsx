@@ -6,33 +6,33 @@ import { Brain, GitPullRequest, Link2, Activity, Bell, CheckCircle2 } from "luci
 const solutions = [
   {
     icon: Brain,
-    title: "Intelligent email understanding",
-    desc: "AI reads, classifies, and prioritizes incoming emails — no human triage needed.",
+    title: "Intelligent Classification",
+    desc: "AI analyzes intent and categorizes incoming requests.",
   },
   {
     icon: GitPullRequest,
-    title: "Smart incident creation",
-    desc: "Automatically creates and assigns ServiceNow incidents or Jira tickets based on issue type.",
+    title: "Automated Ticket Creation",
+    desc: "Instantly generates ServiceNow incidents and Jira tickets.",
   },
   {
     icon: Link2,
-    title: "Seamless tool integration",
-    desc: "Connects ServiceNow, Jira, GitHub, and CI/CD into a single orchestrated workflow.",
+    title: "Smart Routing",
+    desc: "Directs tasks to the correct team based on expertise and availability.",
   },
   {
     icon: Activity,
-    title: "Lifecycle tracking",
-    desc: "Monitors every ticket from creation through code fix, testing, deployment, and resolution.",
+    title: "Lifecycle Synchronization",
+    desc: "Updates status across all platforms in real-time.",
   },
   {
     icon: Bell,
-    title: "Real-time updates",
-    desc: "Stakeholders receive automated status notifications at every critical milestone.",
+    title: "Proactive Notifications",
+    desc: "Keeps users and stakeholders informed at every stage.",
   },
   {
     icon: CheckCircle2,
-    title: "Closed-loop resolution",
-    desc: "Automatically confirms resolution and sends final confirmation — zero manual follow-ups.",
+    title: "Automated Closure",
+    desc: "Validates resolution and closes tickets without manual intervention.",
   },
 ];
 
@@ -62,12 +62,14 @@ export function Solution() {
             </div>
           </div>
           <h2 className="mt-3 font-semibold text-2xl text-black sm:text-3xl md:text-4xl">
-            One AI Agent. Complete Orchestration.
+            One Ecosystem. Intelligent Workflows. Real Impact.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 md:text-base">
-            Flowstream replaces manual handoffs with intelligent, end-to-end automation across your
-            entire incident lifecycle.
+            FlowStream serves as the intelligent bridge between your support channels and technical execution.
+            <br className="mt-2 block" />
+            Our platform orchestrates the complete incident lifecycle:
           </p>
+       
         </motion.div>
 
         <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
