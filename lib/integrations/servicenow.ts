@@ -4,6 +4,7 @@
  */
 
 const SERVICENOW_BACKEND_URL = process.env.NEXT_PUBLIC_SERVICENOW_BEND_URL || 'http://127.0.0.1:8001';
+const DEFAULT_REQUEST_TIMEOUT_MS = 10_000;
 
 export interface ServiceNowTicket {
     sys_id: string;
@@ -24,26 +25,63 @@ export class ServiceNowClient {
     private baseUrl: string;
 
     constructor(baseUrl?: string) {
-        this.baseUrl = baseUrl || SERVICENOW_BACKEND_URL;
+        this.baseUrl = (baseUrl || SERVICENOW_BACKEND_URL).replace(/\/+$/, '');
+    }
+
+    private async fetchJson<T>(
+        path: string,
+        init: RequestInit = {},
+        options: {
+            signal?: AbortSignal;
+            timeoutMs?: number;
+        } = {}
+    ): Promise<T> {
+        const controller = new AbortController();
+        const timeoutMs = options.timeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
+        const timeoutId = setTimeout(() => controller.abort(new Error("Request timeout")), timeoutMs);
+
+        const abortFromCaller = () => controller.abort(options.signal?.reason);
+        options.signal?.addEventListener("abort", abortFromCaller, { once: true });
+
+        try {
+            const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+            const response = await fetch(`${this.baseUrl}${normalizedPath}`, {
+                ...init,
+                signal: controller.signal,
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(init.headers || {}),
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`ServiceNow backend error: ${response.status} ${response.statusText}`);
+            }
+
+            return await response.json() as T;
+        } finally {
+            clearTimeout(timeoutId);
+            options.signal?.removeEventListener("abort", abortFromCaller);
+        }
     }
 
     /**
      * Fetch all tickets from ServiceNow via the backend
      */
-    async fetchTickets(limit: number = 50, skip: number = 0): Promise<ServiceNowTicket[]> {
+    async fetchTickets(
+        limit: number = 50,
+        skip: number = 0,
+        options: {
+            signal?: AbortSignal;
+            timeoutMs?: number;
+        } = {}
+    ): Promise<ServiceNowTicket[]> {
         try {
-            const response = await fetch(`${this.baseUrl}/servicenow/tickets?limit=${limit}&offset=${skip}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(`ServiceNow backend error: ${response.statusText}`);
-            }
-
-            const data = await response.json();
+            const data = await this.fetchJson<{ tickets?: ServiceNowTicket[] }>(
+                `/servicenow/tickets?limit=${limit}&offset=${skip}`,
+                { method: 'GET' },
+                options
+            );
             return data.tickets || [];
         } catch (error) {
             console.error('Error fetching ServiceNow tickets:', error);
@@ -54,20 +92,19 @@ export class ServiceNowClient {
     /**
      * Fetch a single ticket by number
      */
-    async fetchTicketByNumber(ticketNumber: string): Promise<ServiceNowTicket | null> {
+    async fetchTicketByNumber(
+        ticketNumber: string,
+        options: {
+            signal?: AbortSignal;
+            timeoutMs?: number;
+        } = {}
+    ): Promise<ServiceNowTicket | null> {
         try {
-            const response = await fetch(`${this.baseUrl}/servicenow/tickets/${ticketNumber}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                return null;
-            }
-
-            const data = await response.json();
+            const data = await this.fetchJson<{ ticket?: ServiceNowTicket }>(
+                `/servicenow/tickets/${ticketNumber}`,
+                { method: 'GET' },
+                options
+            );
             return data.ticket || null;
         } catch (error) {
             console.error('Error fetching ServiceNow ticket:', error);
@@ -78,21 +115,22 @@ export class ServiceNowClient {
     /**
      * Trigger manual workflow (email check and ticket creation)
      */
-    async triggerManualWorkflow(manual: boolean = true): Promise<{ success: boolean; message: string; data?: any }> {
+    async triggerManualWorkflow(
+        manual: boolean = true,
+        options: {
+            signal?: AbortSignal;
+            timeoutMs?: number;
+        } = {}
+    ): Promise<{ success: boolean; message: string; data?: any }> {
         try {
-            const response = await fetch(`${this.baseUrl}/trigger-manual`, {
+            const data = await this.fetchJson<{ message?: string; data?: any }>(
+                '/trigger-manual',
+                {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify({ manual })
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to trigger workflow: ${response.statusText}`);
-            }
-
-            const data = await response.json();
+                },
+                options
+            );
             return { success: true, message: data.message || 'Workflow triggered', data: data.data };
         } catch (error) {
             console.error('Error triggering workflow:', error);
@@ -103,10 +141,10 @@ export class ServiceNowClient {
     /**
      * Check health status of ServiceNow backend
      */
-    async healthCheck(): Promise<boolean> {
+    async healthCheck(options: { signal?: AbortSignal; timeoutMs?: number } = {}): Promise<boolean> {
         try {
-            const response = await fetch(`${this.baseUrl}/health`);
-            return response.ok;
+            await this.fetchJson('/health', { method: 'GET' }, options);
+            return true;
         } catch (error) {
             console.error('ServiceNow backend health check failed:', error);
             return false;

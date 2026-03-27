@@ -77,19 +77,35 @@ export default function TicketsPage() {
 
     const [exporting, setExporting] = React.useState(false)
 
+    const fetchTicketsBatch = React.useCallback(async (limit: number, skip: number) => {
+        const params = new URLSearchParams()
+        if (statusFilter !== 'all') params.append('status', statusFilter)
+        if (searchTerm) params.append('search', searchTerm)
+        params.append('limit', limit.toString())
+        params.append('skip', skip.toString())
+
+        const res = await fetch(`/api/tickets?${params.toString()}`)
+        if (!res.ok) throw new Error('Failed to fetch tickets')
+        return res.json()
+    }, [searchTerm, statusFilter])
+
     const exportToExcel = async () => {
         setExporting(true)
         const tid = toast.loading('Preparing export…')
         try {
-            const params = new URLSearchParams()
-            if (statusFilter !== 'all') params.append('status', statusFilter)
-            if (searchTerm) params.append('search', searchTerm)
-            params.append('limit', '500')
-            params.append('skip', '0')
-            const res = await fetch(`/api/tickets?${params.toString()}`)
-            if (!res.ok) throw new Error('Failed to fetch tickets')
-            const data = await res.json()
-            const allTickets = data.tickets || []
+            const maxExportRows = 500
+            const batchSize = 100
+            const allTickets: any[] = []
+
+            for (let offset = 0; offset < maxExportRows; offset += batchSize) {
+                const data = await fetchTicketsBatch(batchSize, offset)
+                const batch = Array.isArray(data.tickets) ? data.tickets : []
+                allTickets.push(...batch)
+
+                if (batch.length < batchSize) {
+                    break
+                }
+            }
             const { buildTicketsWorkbook, downloadExcelBuffer } = await import('@/lib/exportTicketsToExcel')
             const buffer = await buildTicketsWorkbook(allTickets)
             downloadExcelBuffer(buffer, `tickets_export_${format(new Date(), 'yyyy-MM-dd_HHmm')}.xlsx`)

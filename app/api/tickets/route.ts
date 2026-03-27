@@ -4,9 +4,15 @@ import { getCurrentUser } from "@/lib/auth";
 import { servicenowClient } from "@/lib/integrations/servicenow";
 import { jiraClient } from "@/lib/integrations/jira";
 
+const EXTERNAL_API_TIMEOUT_MS = 10_000;
+const MAX_EXTERNAL_FETCH_DEPTH = 100;
+const MAX_TICKETS_LIMIT = 100;
+
 /**
  * GET /api/tickets - Get tickets from external sources (Real-time)
  */
+export const maxDuration = 30;
+
 export async function GET(request: NextRequest) {
     try {
         const user = await getCurrentUser(request);
@@ -16,8 +22,13 @@ export async function GET(request: NextRequest) {
 
         const { searchParams } = new URL(request.url);
         const status = searchParams.get("status");
-        const limit = parseInt(searchParams.get("limit") || "50");
-        const skip = parseInt(searchParams.get("skip") || "0");
+        const requestedLimit = parseInt(searchParams.get("limit") || "50");
+        const requestedSkip = parseInt(searchParams.get("skip") || "0");
+        const limit = Math.min(
+            MAX_TICKETS_LIMIT,
+            Number.isFinite(requestedLimit) ? Math.max(1, requestedLimit) : 50
+        );
+        const skip = Number.isFinite(requestedSkip) ? Math.max(0, requestedSkip) : 0;
         const source = searchParams.get("source"); // 'db', 'servicenow', 'jira', or undefined (both external)
 
         // Mode 1: Fetch locally from DB (if source='db')
@@ -33,42 +44,56 @@ export async function GET(request: NextRequest) {
                 .toArray();
 
             const total = await ticketsCollection.countDocuments(query);
-            return NextResponse.json({ tickets, total, limit, skip, source: 'db' });
+            return NextResponse.json({
+                tickets,
+                total,
+                limit,
+                skip,
+                requestedLimit,
+                source: 'db'
+            });
         }
 
         // Mode 2: Fetch from external sources (Real-time)
         let allTickets: any[] = [];
 
-        // Determine fetch depth. We need enough to provide a good paginated view.
-        // If sorting or filtering in memory, we need a decent sample.
-        const fetchDepth = Math.max(100, skip + limit * 2);
+        // Keep upstream work bounded so serverless requests don't hang until the platform returns 504.
+        const fetchDepth = Math.min(MAX_EXTERNAL_FETCH_DEPTH, Math.max(limit, skip + limit));
 
-        // Fetch ServiceNow
-        try {
-            const snTickets = await servicenowClient.fetchTickets(fetchDepth, 0);
-            const formattedSn = snTickets.map(t => ({
-                _id: `sn-${t.sys_id}`, // Virtual ID
+        const shouldFetchServiceNow = !source || source === "servicenow";
+        const shouldFetchJira = !source || source === "jira";
+
+        const [snResult, jiraResult] = await Promise.allSettled([
+            shouldFetchServiceNow
+                ? servicenowClient.fetchTickets(fetchDepth, 0, { timeoutMs: EXTERNAL_API_TIMEOUT_MS })
+                : Promise.resolve([]),
+            shouldFetchJira
+                ? jiraClient.fetchIssues(fetchDepth, 0, { timeoutMs: EXTERNAL_API_TIMEOUT_MS })
+                : Promise.resolve([]),
+        ]);
+
+        if (snResult.status === "fulfilled") {
+            const formattedSn = snResult.value.map(t => ({
+                _id: `sn-${t.sys_id}`,
                 servicenowTicketId: t.number,
                 subject: t.short_description,
                 description: t.description,
                 status: t.state,
                 priority: t.priority,
                 category: t.category,
-                createdAt: t.sys_created_on?.replace(' ', 'T') || new Date().toISOString(), // Ensure ISO format
+                createdAt: t.sys_created_on?.replace(' ', 'T') || new Date().toISOString(),
                 updatedAt: t.sys_updated_on?.replace(' ', 'T') || new Date().toISOString(),
                 assignedTo: t.assigned_to,
                 source: 'ServiceNow'
             }));
             allTickets = [...allTickets, ...formattedSn];
-        } catch (e) {
-            console.error("Failed to fetch from ServiceNow:", e);
+        } else {
+            console.error("Failed to fetch from ServiceNow:", snResult.reason);
         }
 
-        // Fetch Jira
-        try {
-            const jiraIssues = await jiraClient.fetchIssues(fetchDepth, 0);
-            const formattedJira = jiraIssues.map(i => ({
-                _id: `jira-${i.id}`, // Virtual ID
+        if (jiraResult.status === "fulfilled") {
+            const formattedJira = jiraResult.value.map(i => ({
+                _id: `jira-${i.id}`,
                 jiraTicketId: i.key,
                 subject: i.fields.summary,
                 description: i.fields.description,
@@ -81,8 +106,8 @@ export async function GET(request: NextRequest) {
                 source: 'Jira'
             }));
             allTickets = [...allTickets, ...formattedJira];
-        } catch (e) {
-            console.error("Failed to fetch from Jira:", e);
+        } else {
+            console.error("Failed to fetch from Jira:", jiraResult.reason);
         }
 
         // Apply basic filtering (in-memory since we fetched a buffer)
@@ -105,6 +130,7 @@ export async function GET(request: NextRequest) {
             total: allTickets.length,
             limit,
             skip,
+            requestedLimit,
             source: 'external (real-time)'
         });
 
